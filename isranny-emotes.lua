@@ -1,8 +1,8 @@
--- // ISRANNY EMOTES GUI - V3 (SYSTEM BROKEN EDITION)
+-- // ISRANNY EMOTES GUI - SYSTEM BROKEN EXACT EDITION
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
--- Limpieza de versiones anteriores
+-- Asegurar persistencia y limpieza
 if player:WaitForChild("PlayerGui"):FindFirstChild("IsrannyEmotesGUI") then
     player.PlayerGui.IsrannyEmotesGUI:Destroy()
 end
@@ -12,12 +12,12 @@ gui.Name = "IsrannyEmotesGUI"
 gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
--- // BURBUJA FLOTANTE (Negra, pequeña, con una "E")
+-- // BURBUJA FLOTANTE "E" (Diseño solicitado)
 local bubble = Instance.new("TextButton", gui)
 bubble.Name = "MainBubble"
-bubble.Size = UDim2.new(0, 40, 0, 40) -- Más pequeña
-bubble.Position = UDim2.new(0.1, 0, 0.5, 0)
-bubble.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Negro
+bubble.Size = UDim2.new(0, 40, 0, 40)
+bubble.Position = UDim2.new(0.05, 0, 0.4, 0)
+bubble.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 bubble.Text = "E"
 bubble.TextSize = 20
 bubble.Font = Enum.Font.GothamBold
@@ -28,59 +28,80 @@ local bubbleCorner = Instance.new("UICorner", bubble)
 bubbleCorner.CornerRadius = UDim.new(1, 0)
 
 local bubbleStroke = Instance.new("UIStroke", bubble)
-bubbleStroke.Color = Color3.fromRGB(50, 50, 50)
+bubbleStroke.Color = Color3.fromRGB(60, 60, 60)
 bubbleStroke.Thickness = 1.5
 
--- // PANEL DE EMOTES (Estilo System Broken)
+-- // PANEL DE EMOTES (Diseño Default de System Broken)
 local frame = Instance.new("Frame", gui)
 frame.Name = "EmotePanel"
-frame.Size = UDim2.new(0, 220, 0, 280)
-frame.Position = UDim2.new(0.5, -110, 0.5, -140)
+frame.Size = UDim2.new(0, 230, 0, 310)
+frame.Position = UDim2.new(0.5, -115, 0.5, -155)
 frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 frame.BorderSizePixel = 0
 frame.Visible = false
 frame.Active = true
 
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 6)
 
 local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, 0, 0, 35)
-title.Text = "ISR-EMOTES (SB)"
+title.Size = UDim2.new(1, 0, 0, 38)
+title.Text = "ISRANNY EMOTES (SB)"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 title.Font = Enum.Font.GothamBlack
 title.TextSize = 14
 
 local scroll = Instance.new("ScrollingFrame", frame)
-scroll.Size = UDim2.new(1, -15, 1, -50)
-scroll.Position = UDim2.new(0, 7.5, 0, 42)
+scroll.Size = UDim2.new(1, -10, 1, -50)
+scroll.Position = UDim2.new(0, 5, 0, 45)
 scroll.BackgroundTransparency = 1
-scroll.CanvasSize = UDim2.new(0, 0, 3.5, 0) -- Espacio para muchos emotes
+scroll.CanvasSize = UDim2.new(0, 0, 4, 0) -- Canvas grande para todos los emotes
 scroll.ScrollBarThickness = 3
+scroll.ScrollBarImageColor3 = Color3.fromRGB(50, 50, 50)
 
 local layout = Instance.new("UIListLayout", scroll)
 layout.Padding = UDim.new(0, 4)
 layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- // LISTA DE EMOTES EXTRAÍDA DE SYSTEM BROKEN
-local sbEmotes = {
-    "Old Town Road", "Rekt", "Monkey", "Smooth Criminal", "Hype", "Orange Justice",
-    "Default Dance", "Billy Bounce", "Dab", "Floss", "Take The L", "Best Mates",
-    "Robot", "Fresh", "Groove Jam", "Tidy", "Running Man", "Confused", "Hot Marat",
-    "Bust A Move", "Electro Shuffle", "Hula", "Infinite Dab", "Laugh It Up"
-}
-
+-- // LÓGICA DE EMOTES (Extraída de System Broken)
 local function PlayEmote(name)
     pcall(function()
         game:GetService("GuiService"):PlayEmote(name)
     end)
 end
 
--- Abrir/Cerrar y Arrastrar
+-- Lista Exacta de Emotes de System Broken
+local emotesList = {
+    "Old Town Road", "Rekt", "Monkey", "Smooth Criminal", "Hype", "Orange Justice",
+    "Default Dance", "Billy Bounce", "Dab", "Floss", "Take The L", "Best Mates",
+    "Robot", "Fresh", "Groove Jam", "Tidy", "Running Man", "Confused", "Hot Marat",
+    "Bust A Move", "Electro Shuffle", "Hula", "Infinite Dab", "Laugh It Up",
+    "Dance", "Joyful", "Shrug", "Tilt", "Stadium", "Salute", "Point", "Wave", 
+    "Laugh", "Cheer", "Applaud"
+}
+
+-- Crear Botones Estilo Default
+for _, emote in pairs(emotesList) do
+    local btn = Instance.new("TextButton", scroll)
+    btn.Size = UDim2.new(0.95, 0, 0, 32)
+    btn.Text = emote
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    btn.TextColor3 = Color3.fromRGB(230, 230, 230)
+    btn.Font = Enum.Font.Gotham
+    btn.TextSize = 13
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+    
+    btn.MouseButton1Click:Connect(function()
+        PlayEmote(emote)
+    end)
+end
+
+-- // INTERACCIONES (Abrir y Arrastrar)
 bubble.MouseButton1Click:Connect(function()
     frame.Visible = not frame.Visible
 end)
 
+-- Movimiento de la Burbuja
 local dragging, dragInput, dragStart, startPos
 bubble.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -103,18 +124,4 @@ game:GetService("UserInputService").InputEnded:Connect(function(input)
     end
 end)
 
--- Generar botones con el estilo de SB
-for _, name in pairs(sbEmotes) do
-    local btn = Instance.new("TextButton", scroll)
-    btn.Size = UDim2.new(0.95, 0, 0, 30)
-    btn.Text = name
-    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    btn.TextColor3 = Color3.fromRGB(220, 220, 220)
-    btn.Font = Enum.Font.Gotham
-    btn.TextSize = 12
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
-    
-    btn.MouseButton1Click:Connect(function() PlayEmote(name) end)
-end
-
-print("🔥 Isranny Emotes (SB Version) Cargado. Burbuja 'E' activa.")
+print("✅ ISRANNY EMOTES GUI: Diseño System Broken cargado con burbuja negra 'E'.")
