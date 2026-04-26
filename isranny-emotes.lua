@@ -1,97 +1,86 @@
--- // ISRANNY EMOTES GUI - V2 (Burbuja Flotante y Persistencia)
+-- // ISRANNY EMOTES GUI - V3 (SYSTEM BROKEN EDITION)
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
--- Eliminar versión previa si existe para evitar duplicados
+-- Limpieza de versiones anteriores
 if player:WaitForChild("PlayerGui"):FindFirstChild("IsrannyEmotesGUI") then
     player.PlayerGui.IsrannyEmotesGUI:Destroy()
 end
 
--- // INTERFAZ PRINCIPAL
 local gui = Instance.new("ScreenGui")
 gui.Name = "IsrannyEmotesGUI"
-gui.ResetOnSpawn = false -- CRÍTICO: No se borra al morir
-gui.DisplayOrder = 10
+gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
--- // BOTÓN FLOTANTE (Círculo)
+-- // BURBUJA FLOTANTE (Negra, pequeña, con una "E")
 local bubble = Instance.new("TextButton", gui)
 bubble.Name = "MainBubble"
-bubble.Size = UDim2.new(0, 50, 0, 50)
+bubble.Size = UDim2.new(0, 40, 0, 40) -- Más pequeña
 bubble.Position = UDim2.new(0.1, 0, 0.5, 0)
-bubble.BackgroundColor3 = Color3.fromRGB(0, 255, 120) -- Color llamativo
-bubble.Text = "🕺"
-bubble.TextSize = 25
+bubble.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Negro
+bubble.Text = "E"
+bubble.TextSize = 20
 bubble.Font = Enum.Font.GothamBold
 bubble.TextColor3 = Color3.fromRGB(255, 255, 255)
 bubble.ZIndex = 10
 
 local bubbleCorner = Instance.new("UICorner", bubble)
-bubbleCorner.CornerRadius = UDim.new(1, 0) -- Lo hace un círculo perfecto
+bubbleCorner.CornerRadius = UDim.new(1, 0)
 
 local bubbleStroke = Instance.new("UIStroke", bubble)
-bubbleStroke.Color = Color3.fromRGB(255, 255, 255)
-bubbleStroke.Thickness = 2
+bubbleStroke.Color = Color3.fromRGB(50, 50, 50)
+bubbleStroke.Thickness = 1.5
 
--- // PANEL DE EMOTES (Oculto al inicio)
+-- // PANEL DE EMOTES (Estilo System Broken)
 local frame = Instance.new("Frame", gui)
 frame.Name = "EmotePanel"
-frame.Size = UDim2.new(0, 250, 0, 300)
-frame.Position = UDim2.new(0.5, -125, 0.5, -150)
-frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+frame.Size = UDim2.new(0, 220, 0, 280)
+frame.Position = UDim2.new(0.5, -110, 0.5, -140)
+frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 frame.BorderSizePixel = 0
-frame.Visible = false -- Inicia oculto
+frame.Visible = false
 frame.Active = true
 
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
 
 local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, 0, 0, 40)
-title.Text = "ISRANNY EMOTES"
-title.TextColor3 = Color3.fromRGB(0, 255, 120)
-title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+title.Size = UDim2.new(1, 0, 0, 35)
+title.Text = "ISR-EMOTES (SB)"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 title.Font = Enum.Font.GothamBlack
-title.TextSize = 16
+title.TextSize = 14
 
--- // SCROLL DE EMOTES
 local scroll = Instance.new("ScrollingFrame", frame)
-scroll.Size = UDim2.new(1, -20, 1, -60)
-scroll.Position = UDim2.new(0, 10, 0, 50)
+scroll.Size = UDim2.new(1, -15, 1, -50)
+scroll.Position = UDim2.new(0, 7.5, 0, 42)
 scroll.BackgroundTransparency = 1
-scroll.CanvasSize = UDim2.new(0, 0, 2, 0)
-scroll.ScrollBarThickness = 4
+scroll.CanvasSize = UDim2.new(0, 0, 3.5, 0) -- Espacio para muchos emotes
+scroll.ScrollBarThickness = 3
 
 local layout = Instance.new("UIListLayout", scroll)
-layout.Padding = UDim.new(0, 5)
+layout.Padding = UDim.new(0, 4)
 layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- Botón de Minimizar (Dentro del panel)
-local minBtn = Instance.new("TextButton", frame)
-minBtn.Size = UDim2.new(0, 30, 0, 30)
-minBtn.Position = UDim2.new(1, -35, 0, 5)
-minBtn.Text = "_"
-minBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-minBtn.BackgroundTransparency = 1
-minBtn.Font = Enum.Font.GothamBold
-minBtn.TextSize = 20
+-- // LISTA DE EMOTES EXTRAÍDA DE SYSTEM BROKEN
+local sbEmotes = {
+    "Old Town Road", "Rekt", "Monkey", "Smooth Criminal", "Hype", "Orange Justice",
+    "Default Dance", "Billy Bounce", "Dab", "Floss", "Take The L", "Best Mates",
+    "Robot", "Fresh", "Groove Jam", "Tidy", "Running Man", "Confused", "Hot Marat",
+    "Bust A Move", "Electro Shuffle", "Hula", "Infinite Dab", "Laugh It Up"
+}
 
--- // LÓGICA DE INTERACCIÓN
 local function PlayEmote(name)
     pcall(function()
         game:GetService("GuiService"):PlayEmote(name)
     end)
 end
 
--- Abrir/Cerrar
+-- Abrir/Cerrar y Arrastrar
 bubble.MouseButton1Click:Connect(function()
     frame.Visible = not frame.Visible
 end)
 
-minBtn.MouseButton1Click:Connect(function()
-    frame.Visible = false
-end)
-
--- Hacer la burbuja movible (Drag)
 local dragging, dragInput, dragStart, startPos
 bubble.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -114,20 +103,18 @@ game:GetService("UserInputService").InputEnded:Connect(function(input)
     end
 end)
 
--- Generar Botones de Emotes
-local emotes = {"Dance", "Joyful", "Shrug", "Tilt", "Stadium", "Salute", "Point", "Wave", "Laugh", "Cheer", "Applaud"}
-
-for _, name in pairs(emotes) do
+-- Generar botones con el estilo de SB
+for _, name in pairs(sbEmotes) do
     local btn = Instance.new("TextButton", scroll)
-    btn.Size = UDim2.new(0.9, 0, 0, 35)
+    btn.Size = UDim2.new(0.95, 0, 0, 30)
     btn.Text = name
-    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    btn.TextColor3 = Color3.fromRGB(220, 220, 220)
     btn.Font = Enum.Font.Gotham
-    btn.TextSize = 14
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    btn.TextSize = 12
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
     
     btn.MouseButton1Click:Connect(function() PlayEmote(name) end)
 end
 
-print("✅ Isranny Emotes V2: Burbuja flotante activa y persistente.")
+print("🔥 Isranny Emotes (SB Version) Cargado. Burbuja 'E' activa.")
