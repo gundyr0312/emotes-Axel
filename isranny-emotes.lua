@@ -1,4 +1,3 @@
--- // REPLICA EXACTA SYSTEM BROKEN (Captura 2)
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
 local player = Players.LocalPlayer
