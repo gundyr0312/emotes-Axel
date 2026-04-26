@@ -1,28 +1,28 @@
--- // ISRANNY EMOTES - REPLICA TOTAL (DESIGN SYSTEM BROKEN)
+-- // REPLICA EXACTA SYSTEM BROKEN (Captura 2)
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 
--- Persistencia total
-if player:WaitForChild("PlayerGui"):FindFirstChild("IsrannySystemBroken") then
-    player.PlayerGui.IsrannySystemBroken:Destroy()
+-- Persistencia total (No se borra al morir)
+if player:WaitForChild("PlayerGui"):FindFirstChild("SB_Emotes_Final") then
+    player.PlayerGui.SB_Emotes_Final:Destroy()
 end
 
 local gui = Instance.new("ScreenGui")
-gui.Name = "IsrannySystemBroken"
+gui.Name = "SB_Emotes_Final"
 gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
--- // BURBUJA "E" (Réplica exacta de la esquina superior izquierda)
+-- // BURBUJA "E" (Trigger idéntico a la foto)
 local bubble = Instance.new("TextButton", gui)
 bubble.Name = "Trigger"
-bubble.Size = UDim2.new(0, 44, 0, 44)
-bubble.Position = UDim2.new(0, 20, 0, 20) -- Posición de la foto
-bubble.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+bubble.Size = UDim2.new(0, 45, 0, 45)
+bubble.Position = UDim2.new(0, 20, 0.1, 0)
+bubble.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
 bubble.Text = "E"
 bubble.TextColor3 = Color3.fromRGB(255, 255, 255)
 bubble.Font = Enum.Font.GothamBold
-bubble.TextSize = 24
+bubble.TextSize = 25
 bubble.ZIndex = 100
 
 local bCorner = Instance.new("UICorner", bubble)
@@ -30,14 +30,14 @@ bCorner.CornerRadius = UDim.new(1, 0)
 
 local bStroke = Instance.new("UIStroke", bubble)
 bStroke.Color = Color3.fromRGB(255, 255, 255)
-bStroke.Thickness = 1.8
+bStroke.Thickness = 1.5
 
--- // PANEL PRINCIPAL (Diseño exacto de la foto)
+-- // PANEL PRINCIPAL (Diseño exacto de la segunda foto)
 local main = Instance.new("Frame", gui)
 main.Name = "MainFrame"
-main.Size = UDim2.new(0, 260, 0, 360)
-main.Position = UDim2.new(0.5, -130, 0.5, -180)
-main.BackgroundColor3 = Color3.fromRGB(24, 25, 28) -- Gris oscuro de la imagen
+main.Size = UDim2.new(0, 255, 0, 350)
+main.Position = UDim2.new(0.5, -127, 0.5, -175)
+main.BackgroundColor3 = Color3.fromRGB(25, 26, 28) -- Gris fondo
 main.BorderSizePixel = 0
 main.Visible = false
 main.Active = true
@@ -45,81 +45,92 @@ main.Active = true
 local mCorner = Instance.new("UICorner", main)
 mCorner.CornerRadius = UDim.new(0, 8)
 
--- Header (Gris grafito más claro)
+-- Encabezado Gris
 local header = Instance.new("Frame", main)
-header.Size = UDim2.new(1, 0, 0, 42)
-header.BackgroundColor3 = Color3.fromRGB(48, 50, 54)
+header.Size = UDim2.new(1, 0, 0, 40)
+header.BackgroundColor3 = Color3.fromRGB(52, 54, 58) -- Color barra superior
 header.BorderSizePixel = 0
 
 local hCorner = Instance.new("UICorner", header)
 hCorner.CornerRadius = UDim.new(0, 8)
 
--- Título con la fuente de la imagen
 local title = Instance.new("TextLabel", header)
 title.Size = UDim2.new(1, 0, 1, 0)
 title.BackgroundTransparency = 1
 title.Text = "System Broken | Emotes"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.Font = Enum.Font.GothamBold
-title.TextSize = 18
+title.TextSize = 16
 
--- Contenedor de lista (ScrollingFrame)
-local scroll = Instance.new("ScrollingFrame", main)
-scroll.Size = UDim2.new(1, -12, 1, -100)
-scroll.Position = UDim2.new(0, 6, 0, 50)
+-- Contenedor de Emotes (Área interna negra)
+local container = Instance.new("Frame", main)
+container.Size = UDim2.new(1, -16, 1, -95)
+container.Position = UDim2.new(0, 8, 0, 48)
+container.BackgroundColor3 = Color3.fromRGB(15, 16, 18)
+container.BorderSizePixel = 0
+
+local cCorner = Instance.new("UICorner", container)
+cCorner.CornerRadius = UDim.new(0, 6)
+
+local scroll = Instance.new("ScrollingFrame", container)
+scroll.Size = UDim2.new(1, -4, 1, -10)
+scroll.Position = UDim2.new(0, 2, 0, 5)
 scroll.BackgroundTransparency = 1
 scroll.BorderSizePixel = 0
-scroll.ScrollBarThickness = 4
+scroll.ScrollBarThickness = 3
 scroll.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
-scroll.CanvasSize = UDim2.new(0, 0, 2.8, 0)
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 
 local layout = Instance.new("UIListLayout", scroll)
-layout.Padding = UDim.new(0, 6)
+layout.Padding = UDim.new(0, 5)
 layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- Botón Cyan "Free emotes" (Idéntico a la foto)
+-- Botón Cyan "Free emotes" (Ubicación exacta)
 local freeBtn = Instance.new("TextButton", main)
-freeBtn.Size = UDim2.new(0, 110, 0, 32)
-freeBtn.Position = UDim2.new(1, -118, 1, -42)
-freeBtn.BackgroundColor3 = Color3.fromRGB(0, 220, 255) -- Cyan eléctrico
+freeBtn.Size = UDim2.new(0, 105, 0, 28)
+freeBtn.Position = UDim2.new(1, -115, 1, -40)
+freeBtn.BackgroundColor3 = Color3.fromRGB(80, 215, 240) -- Cyan exacto de la captura
 freeBtn.Text = "Free emotes"
 freeBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
 freeBtn.Font = Enum.Font.GothamBold
-freeBtn.TextSize = 14
+freeBtn.TextSize = 13
 
 local fCorner = Instance.new("UICorner", freeBtn)
-fCorner.CornerRadius = UDim.new(0, 5)
+fCorner.CornerRadius = UDim.new(0, 4)
 
--- // LISTA DE EMOTES (Nombres exactos de tu captura)
-local emotes = {
+-- // LISTA DE EMOTES (Nombres exactos de la foto)
+local visualEmotes = {
     "Orange Justice", "Billy Bounce", "Electro Shuffle", "Hype", "Default Dance",
     "Dab", "Best Mates", "Reaf Mane", "Just Mane", "Dab Linde", "Best Wads",
     "Show Lock", "Harat Gant", "Uly Range"
 }
 
-for _, name in pairs(emotes) do
+for _, name in pairs(visualEmotes) do
     local btn = Instance.new("TextButton", scroll)
-    btn.Size = UDim2.new(0.96, 0, 0, 34)
-    btn.BackgroundColor3 = Color3.fromRGB(40, 42, 46) -- Botones de la foto
+    btn.Size = UDim2.new(0.98, 0, 0, 30)
+    btn.BackgroundColor3 = Color3.fromRGB(38, 40, 44)
     btn.Text = name
     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
     btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 14
+    btn.TextSize = 13
     
     local bC = Instance.new("UICorner", btn)
-    bC.CornerRadius = UDim.new(0, 5)
+    bC.CornerRadius = UDim.new(0, 4)
     
     btn.MouseButton1Click:Connect(function()
         pcall(function() game:GetService("GuiService"):PlayEmote(name) end)
     end)
 end
 
--- // INTERACCIONES
+scroll.CanvasSize = UDim2.new(0, 0, 0, #visualEmotes * 35)
+
+-- // FUNCIONES DE INTERACCIÓN
 bubble.MouseButton1Click:Connect(function()
     main.Visible = not main.Visible
 end)
 
 freeBtn.MouseButton1Click:Connect(function()
+    -- Carga el script de 50k emotes que mandaste en el txt
     loadstring(game:HttpGet("https://raw.githubusercontent.com/H20CalibreYT/SystemBroken/main/AllEmotes"))()
 end)
 
