@@ -1,163 +1,132 @@
--- // SYSTEM BROKEN | UNIVERSAL EMOTES (50K+ COMPATIBLE)
+-- // REPLICA EXACTA DE GUI "SYSTEM BROKEN | EMOTES" (SB DESIGN)
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
-local HttpService = game:GetService("HttpService")
 local player = Players.LocalPlayer
 
--- Asegurar persistencia y limpiar versiones viejas
-if player:WaitForChild("PlayerGui"):FindFirstChild("SB_Emotes") then
-    player.PlayerGui.SB_Emotes:Destroy()
+-- Asegurar persistencia (No se borra al morir)
+if player:WaitForChild("PlayerGui"):FindFirstChild("SB_Emotes_Replica") then
+    player.PlayerGui.SB_Emotes_Replica:Destroy()
 end
 
 local gui = Instance.new("ScreenGui")
-gui.Name = "SB_Emotes"
-gui.ResetOnSpawn = false
+gui.Name = "SB_Emotes_Replica"
+gui.ResetOnSpawn = false -- Crítico para que no desaparezca
 gui.Parent = player:WaitForChild("PlayerGui")
 
--- // BURBUJA "E" (Draggable & Black)
+-- // BURBUJA "E" DE ACCESO (Diseño de la foto)
 local bubble = Instance.new("TextButton", gui)
-bubble.Size = UDim2.new(0, 45, 0, 45)
-bubble.Position = UDim2.new(0, 20, 0.2, 0)
-bubble.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+bubble.Name = "Trigger"
+bubble.Size = UDim2.new(0, 42, 0, 42)
+bubble.Position = UDim2.new(0, 15, 0.15, 0) -- Top left, como en la foto
+bubble.BackgroundColor3 = Color3.fromRGB(15, 15, 15) -- Negro profundo
 bubble.Text = "E"
 bubble.TextColor3 = Color3.fromRGB(255, 255, 255)
 bubble.Font = Enum.Font.GothamBold
-bubble.TextSize = 24
+bubble.TextSize = 22
 bubble.ZIndex = 100
 
 local bCorner = Instance.new("UICorner", bubble)
-bCorner.CornerRadius = UDim.new(1, 0)
-local bStroke = Instance.new("UIStroke", bubble)
-bStroke.Color = Color3.fromRGB(50, 50, 50)
-bStroke.Thickness = 2
+bCorner.CornerRadius = UDim.new(1, 0) -- Círculo perfecto
 
--- // PANEL PRINCIPAL (Diseño System Broken)
+local bStroke = Instance.new("UIStroke", bubble)
+bStroke.Color = Color3.fromRGB(255, 255, 255) -- Borde blanco
+bStroke.Thickness = 1.5
+
+-- // PANEL PRINCIPAL (Réplica exacta de la imagen)
 local main = Instance.new("Frame", gui)
 main.Name = "MainFrame"
-main.Size = UDim2.new(0, 280, 0, 380)
-main.Position = UDim2.new(0.5, -140, 0.5, -190)
-main.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+main.Size = UDim2.new(0, 240, 0, 330) -- Tamaño proporcional a la foto
+main.Position = UDim2.new(0.5, -120, 0.5, -165) -- Centrado
+main.BackgroundColor3 = Color3.fromRGB(28, 28, 32) -- Gris carbón oscuro de la imagen
+main.BorderSizePixel = 0
 main.Visible = false
 main.Active = true
 
 local mCorner = Instance.new("UICorner", main)
-mCorner.CornerRadius = UDim.new(0, 8)
+mCorner.CornerRadius = UDim.new(0, 6)
 
--- Encabezado
+-- Header (Gris SB, más claro que el fondo)
 local header = Instance.new("Frame", main)
-header.Size = UDim2.new(1, 0, 0, 40)
-header.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+header.Size = UDim2.new(1, 0, 0, 36)
+header.BackgroundColor3 = Color3.fromRGB(48, 48, 52) -- Color de la barra superior
+header.BorderSizePixel = 0
 
 local hCorner = Instance.new("UICorner", header)
-hCorner.CornerRadius = UDim.new(0, 8)
+hCorner.CornerRadius = UDim.new(0, 6)
 
 local title = Instance.new("TextLabel", header)
-title.Size = UDim2.new(1, -40, 1, 0)
-title.Position = UDim2.new(0, 15, 0, 0)
+title.Size = UDim2.new(1, 0, 1, 0)
 title.BackgroundTransparency = 1
 title.Text = "System Broken | Emotes"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.Font = Enum.Font.GothamBold
-title.TextSize = 16
-title.TextXAlignment = Enum.TextXAlignment.Left
+title.TextSize = 15
 
--- BARRA DE BÚSQUEDA (Para manejar los 50k emotes)
-local searchBox = Instance.new("TextBox", main)
-searchBox.Size = UDim2.new(1, -20, 0, 30)
-searchBox.Position = UDim2.new(0, 10, 0, 50)
-searchBox.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-searchBox.PlaceholderText = "Search 50,000+ emotes..."
-searchBox.Text = ""
-searchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-searchBox.Font = Enum.Font.Gotham
-searchBox.TextSize = 14
-
-local sCorner = Instance.new("UICorner", searchBox)
-sCorner.CornerRadius = UDim.new(0, 4)
-
--- Contenedor con Scroll
+-- Contenedor de Emotes con Scroll
 local scroll = Instance.new("ScrollingFrame", main)
-scroll.Size = UDim2.new(1, -10, 1, -135)
-scroll.Position = UDim2.new(0, 5, 0, 90)
+scroll.Size = UDim2.new(1, -12, 1, -85)
+scroll.Position = UDim2.new(0, 6, 0, 42)
 scroll.BackgroundTransparency = 1
-scroll.ScrollBarThickness = 4
-scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.BorderSizePixel = 0
+scroll.ScrollBarThickness = 3
+scroll.ScrollBarImageColor3 = Color3.fromRGB(120, 120, 120)
+scroll.CanvasSize = UDim2.new(0, 0, 2.5, 0) -- Espacio para la lista
 
 local layout = Instance.new("UIListLayout", scroll)
-layout.Padding = UDim.new(0, 5)
+layout.Padding = UDim.new(0, 4)
 layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- Botón Cyan "Free Emotes"
+-- Botón Cyan "Free emotes" (Exacto a la foto)
 local freeBtn = Instance.new("TextButton", main)
-freeBtn.Size = UDim2.new(0, 120, 0, 30)
-freeBtn.Position = UDim2.new(1, -130, 1, -35)
-freeBtn.BackgroundColor3 = Color3.fromRGB(0, 210, 230)
+freeBtn.Size = UDim2.new(0, 95, 0, 26)
+freeBtn.Position = UDim2.new(1, -105, 1, -35) -- Bottom right, como en la foto
+freeBtn.BackgroundColor3 = Color3.fromRGB(0, 210, 230) -- Color Cyan exacto
 freeBtn.Text = "Free emotes"
-freeBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+freeBtn.TextColor3 = Color3.fromRGB(0, 0, 0) -- Texto negro en el cyan
 freeBtn.Font = Enum.Font.GothamBold
-freeBtn.TextSize = 13
+freeBtn.TextSize = 12
 
 local fCorner = Instance.new("UICorner", freeBtn)
-fCorner.CornerRadius = UDim.new(0, 5)
+fCorner.CornerRadius = UDim.new(0, 4)
 
--- // LÓGICA DE DATOS (Basada en 7yd7 / emotes.txt)
-local allEmotes = {}
+-- // LISTA DE EMOTES (Lista EXACTA de la imagen)
+local emotes = {
+    "Orange Justice", "Billy Bounce", "Electro Shuffle", "Hype", "Default Dance",
+    "Dab", "Best Mates", "Reaf Mane", "Just Mane", "Dab LInde", "Best Wads",
+    "Show Lock", "Harat Gant", "Uly Range"
+}
 
--- Función para cargar la base de datos masiva
-local function LoadEmoteDatabase()
-    local success, result = pcall(function()
-        return HttpService:JSONDecode(game:HttpGet("https://raw.githubusercontent.com/7yd7/Hub/refs/heads/Branch/GUIS/EmoteList.json"))
-    end)
-    if success and result then
-        allEmotes = result
-        print("System Broken: " .. #allEmotes .. " emotes cargados.")
-    end
-end
-
-local function RenderEmotes(filter)
-    for _, child in pairs(scroll:GetChildren()) do
-        if child:IsA("TextButton") then child:Destroy() end
-    end
+for _, name in pairs(emotes) do
+    local btn = Instance.new("TextButton", scroll)
+    btn.Size = UDim2.new(0.98, 0, 0, 30)
+    btn.BackgroundColor3 = Color3.fromRGB(38, 38, 42) -- Color de los botones de emote
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 13
     
-    local count = 0
-    for name, id in pairs(allEmotes) do
-        if count > 100 then break end -- Limite visual para evitar lag
-        if not filter or string.find(string.lower(name), string.lower(filter)) then
-            count = count + 1
-            local btn = Instance.new("TextButton", scroll)
-            btn.Size = UDim2.new(0.9, 0, 0, 35)
-            btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-            btn.Text = name
-            btn.TextColor3 = Color3.fromRGB(200, 200, 200)
-            btn.Font = Enum.Font.Gotham
-            btn.TextSize = 13
-            
-            Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
-            
-            btn.MouseButton1Click:Connect(function()
-                pcall(function()
-                    game:GetService("GuiService"):PlayEmote(name)
-                end)
-            end)
-        end
-    end
-    scroll.CanvasSize = UDim2.new(0, 0, 0, count * 40)
+    local bC = Instance.new("UICorner", btn)
+    bC.CornerRadius = UDim.new(0, 4)
+    
+    -- Funcionalidad de Play Emote
+    btn.MouseButton1Click:Connect(function()
+        pcall(function()
+            game:GetService("GuiService"):PlayEmote(name)
+        end)
+    end)
 end
 
--- // EVENTOS
-searchBox:GetPropertyChangedSignal("Text"):Connect(function()
-    RenderEmotes(searchBox.Text)
-end)
-
+-- // INTERACCIONES (Abrir y Arrastrar)
 bubble.MouseButton1Click:Connect(function()
     main.Visible = not main.Visible
 end)
 
+-- Cargador del Free Emotes oficial de SB
 freeBtn.MouseButton1Click:Connect(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/7yd7/Hub/refs/heads/Branch/GUIS/Emote.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/H20CalibreYT/SystemBroken/main/AllEmotes"))()
 end)
 
--- Draggable logic
+-- Lógica para arrastrar la burbuja (Mobile & PC compatible)
 local dragging, dragStart, startPos
 bubble.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -180,6 +149,4 @@ UIS.InputEnded:Connect(function(input)
     end
 end)
 
--- Iniciar
-task.spawn(LoadEmoteDatabase)
-RenderEmotes()
+print("✅ System Broken Emotes Réplica Cargada. Burbuja 'E' activa y persistente.")
