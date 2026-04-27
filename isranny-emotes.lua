@@ -85,11 +85,12 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.Parent = CoreGui
 
 local BackFrame = Instance.new("Frame")
-BackFrame.Size = UDim2.new(0.9,0.55,0)
-BackFrame.Position = UDim2.new(0.5,0.5,0)
+BackFrame.Size = UDim2.new(0.9, 0, 0.55, 0)
+BackFrame.Position = UDim2.new(0.5, 0, 0.5, 0) 
 BackFrame.AnchorPoint = Vector2.new(0.5,0.5)
 BackFrame.SizeConstraint = Enum.SizeConstraint.RelativeYY
-BackFrame.BackgroundTransparency = 1
+BackFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20) 
+BackFrame.BackgroundTransparency = 0.2 
 BackFrame.Visible = false
 BackFrame.Parent = ScreenGui
 
