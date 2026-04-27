@@ -1,4 +1,4 @@
---- Keybind: "," - Emotes v4 (SOLO EMOTES - FINAL BUG-FREE)
+--- Keybind: "," - Emotes v4 (SOLO EMOTES - OPTIMIZADO)
 local env = getgenv()
 if env.LastExecuted and tick() - env.LastExecuted < 30 then
     return
@@ -250,7 +250,7 @@ local Emotes = {
     -- Agrega más emotes aquí con el mismo formato
 }
 
--- 🔥 FUNCIÓN FINAL CON FAILSAFE
+-- 🔥 FUNCIÓN OPTIMIZADA - REINICIA SI ES EL MISMO
 local function PlayEmote(name, id)
     local char = LocalPlayer.Character
     if not char then return end
@@ -261,15 +261,17 @@ local function PlayEmote(name, id)
     local animator = hum:FindFirstChildOfClass("Animator")
     if not animator then return end
 
-    -- 🔥 LIMPIEZA TOTAL (incluye el anterior SIEMPRE)
-    if currentTrack then
-        pcall(function()
-            currentTrack:Stop(0)
-            currentTrack:Destroy()
-        end)
-        currentTrack = nil
+    -- 🔥 SI YA HAY UNO IGUAL → REINICIARLO (CLAVE)
+    if currentTrack and currentTrack.Animation
+        and currentTrack.Animation.AnimationId == "rbxassetid://"..id then
+
+        currentTrack:Stop(0)
+        currentTrack.TimePosition = 0
+        currentTrack:Play()
+        return
     end
 
+    -- 🔥 LIMPIAR OTROS EMOTES
     for _, track in pairs(animator:GetPlayingAnimationTracks()) do
         pcall(function()
             track:Stop(0)
@@ -277,7 +279,8 @@ local function PlayEmote(name, id)
         end)
     end
 
-    task.wait(0.05) -- 🔥 más estable que wait()
+    currentTrack = nil
+    task.wait(0.03)
 
     -- 🔥 NUEVA ANIMACIÓN
     local anim = Instance.new("Animation")
@@ -286,40 +289,22 @@ local function PlayEmote(name, id)
     local track = animator:LoadAnimation(anim)
     currentTrack = track
 
-    -- 🔥 CONFIG PRO
+    -- 🔥 CONFIG
     track.Priority = canWalk and Enum.AnimationPriority.Movement or Enum.AnimationPriority.Action
     track.Looped = canWalk
     track:AdjustSpeed(emoteSpeed)
 
-    track:Play()
+    track:Play(0)
 
-    -- 🔥 FAILSAFE (por si Stopped no se dispara)
-    task.delay(10, function()
-        if track and track == currentTrack then
-            pcall(function()
-                track:Stop()
-                track:Destroy()
-            end)
-            currentTrack = nil
-        end
-        if anim then
-            anim:Destroy()
-        end
-    end)
-
-    -- 🔥 SI funciona, mejor
+    -- 🔥 LIMPIEZA AL TERMINAR
     track.Stopped:Connect(function()
-        if track then
-            pcall(function()
-                track:Destroy()
-            end)
-        end
-        if anim then
-            anim:Destroy()
-        end
         if currentTrack == track then
             currentTrack = nil
         end
+        pcall(function()
+            track:Destroy()
+            anim:Destroy()
+        end)
     end)
 
     StarterGui:SetCore("SendNotification", {
@@ -466,7 +451,6 @@ end)
 
 LocalPlayer.CharacterAdded:Connect(function()
     task.wait(2)
-    -- Limpiar al respawnear
     for _, track in pairs(LocalPlayer.Character.Humanoid:GetPlayingAnimationTracks()) do
         track:Stop(0)
         track:Destroy()
