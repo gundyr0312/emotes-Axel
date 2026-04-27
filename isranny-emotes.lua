@@ -1,4 +1,4 @@
---- Keybind: "," - Emotes & Animations v5 (IDs REALES)
+--- Keybind: "," - FIXED v6
 local env=getgenv()
 if env.LastExecuted and tick()-env.LastExecuted<30 then return end
 env.LastExecuted=tick()
@@ -20,6 +20,7 @@ local currentMode = "Emotes"
 local emoteSpeed = 1
 local canWalk = false
 local currentTrack = nil
+local currentAnimData = nil
 
 local ELECTRIC_BLUE = Color3.fromRGB(0, 200, 255)
 
@@ -131,7 +132,7 @@ SpeedLabel.AnchorPoint = Vector2.new(0.5, 0.5)
 SpeedLabel.Text = "Speed: 1x"
 SpeedLabel.TextScaled = true
 SpeedLabel.BackgroundColor3 = Color3.new(0,0,0)
-SpeedLabel.TextColor3 = Color3.new(1,1,1)
+SpeedLabel.TextColor3 = Color3.new(1,1)
 SpeedLabel.BackgroundTransparency = 0.3
 SpeedLabel.Parent = BackFrame
 Corner:Clone().Parent = SpeedLabel
@@ -146,7 +147,7 @@ SpeedUp.AnchorPoint = Vector2.new(0.5, 0.5)
 SpeedUp.Text = "+"
 SpeedUp.TextScaled = true
 SpeedUp.BackgroundColor3 = Color3.fromRGB(0,150,0)
-SpeedUp.TextColor3 = Color3.new(1,1,1)
+SpeedUp.TextColor3 = Color3.new(1,1)
 SpeedUp.Parent = BackFrame
 Corner:Clone().Parent = SpeedUp
 local UpStroke = Instance.new("UIStroke", SpeedUp)
@@ -245,15 +246,10 @@ end, true, 2001, Enum.KeyCode.Comma)
 
 local LocalPlayer = Players.LocalPlayer
 
--- ============================================
 local Emotes = {
-    { name = "Salute", id = 3360689775, icon = "rbxthumb://type=Asset&id=3360689775&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Salute", id = 3360689775, icon = "rbxthumb://type=Asset&id=3360689775&w=150&h=150" },
 }
--- ============================================
 
--- ============================================
--- ANIMACIONES CON IDs REALES
--- ============================================
 local Animations = {
     { name = "Astronaut", id = 891621366, icon = "rbxassetid://891621366", data = {idle1=891621366, idle2=891633237, walk=891667138, run=891636393, jump=891627522, climb=891609353, fall=891617961} },
     { name = "Bubbly", id = 910004836, icon = "rbxassetid://910004836", data = {idle1=910004836, idle2=910009958, walk=910034870, run=910025107, jump=910016857, fall=910001910} },
@@ -280,11 +276,9 @@ local Animations = {
     { name = "Princess", id = 941003647, icon = "rbxassetid://941003647", data = {idle1=941003647, idle2=941013098, walk=941028902, run=941015281, jump=941008832, climb=940996062, fall=941000007} },
     { name = "Anthro", id = 2510196951, icon = "rbxassetid://2510196951", data = {idle1=2510196951, idle2=2510197257, walk=2510202577, run=2510198475, jump=2510197830, climb=2510192778, fall=2510195892} },
 }
--- ============================================
 
 for _,list in pairs({Emotes, Animations}) do
     table.sort(list, function(a,b) return a.name < b.name end)
-    for i,v in ipairs(list) do v.sort.alphabeticfirst = i end
 end
 
 local function PlayAnimation(name, data)
@@ -292,10 +286,9 @@ local function PlayAnimation(name, data)
     if not char then return end
     local animate = char:FindFirstChild("Animate")
     if not animate then return end
-
     if currentTrack then currentTrack:Stop() end
+    currentAnimData = data
 
-    -- Aplicar TODAS las animaciones
     pcall(function()
         animate.idle.Animation1.AnimationId = "rbxassetid://"..data.idle1
         animate.idle.Animation2.AnimationId = "rbxassetid://"..data.idle2
@@ -306,9 +299,8 @@ local function PlayAnimation(name, data)
         if data.fall and animate.fall then animate.fall.FallAnim.AnimationId = "rbxassetid://"..data.fall end
     end)
 
-    -- Forzar actualización
     local hum = char:FindFirstChildOfClass("Humanoid")
-    if hum then hum.Jump = true end
+    if hum then hum.Jump = true task.wait() hum.Jump = false end
 
     BackFrame.Visible = false
     Open.Text = "Open"
@@ -320,20 +312,16 @@ local function PlayEmote(name, id)
     if not char then return end
     local hum = char:FindFirstChildOfClass("Humanoid")
     if not hum then return end
-    local desc = hum:FindFirstChildOfClass("HumanoidDescription") or Instance.new("HumanoidDescription", hum)
 
-    if currentTrack then currentTrack:Stop() end
+    if currentTrack then currentTrack:Stop() currentTrack = nil end
 
-    if hum.RigType ~= Enum.HumanoidRigType.R6 then
+    if hum.RigType == Enum.HumanoidRigType.R15 then
         local success, track = pcall(function() return hum:PlayEmoteAndGetAnimTrackById(id) end)
-        if not success then
-            pcall(function() desc:AddEmote(name, id) end)
-            success, track = pcall(function() return hum:PlayEmoteAndGetAnimTrackById(id) end)
-        end
         if success and track then
             currentTrack = track
             track:AdjustSpeed(emoteSpeed)
-            if canWalk then track.Priority = Enum.AnimationPriority.Action end
+            track.Priority = canWalk and Enum.AnimationPriority.Action or Enum.AnimationPriority.Movement
+            track.Looped = true
         end
     end
     BackFrame.Visible = false
@@ -341,11 +329,11 @@ local function PlayEmote(name, id)
 end
 
 local function ShowPage(page)
-    for _,v in pairs(Frame:GetChildren()) do if not v:IsA("UIGridLayout") then v:Destroy() end end
+    for _,v in pairs(Frame:GetChildren()) do if v:IsA("GuiButton") then v:Destroy() end end
     local list = currentMode == "Emotes" and Emotes or Animations
     local startIdx = (page - 1) * EMOTES_PER_PAGE + 1
     local endIdx = math.min(page * EMOTES_PER_PAGE, #list)
-    local totalPages = math.ceil(#list / EMOTES_PER_PAGE)
+    local totalPages = math.max(1, math.ceil(#list / EMOTES_PER_PAGE))
     PageLabel.Text = page.."/"..totalPages
     PrevPage.Visible = page > 1
     NextPage.Visible = page < totalPages
@@ -387,15 +375,27 @@ WalkButton.MouseButton1Click:Connect(function()
     canWalk = not canWalk
     WalkButton.Text = "Walk: ".. (canWalk and "ON" or "OFF")
     WalkButton.BackgroundColor3 = canWalk and Color3.fromRGB(0,100,0) or Color3.fromRGB(100,0,0)
-    if currentTrack then currentTrack.Priority = canWalk and Enum.AnimationPriority.Action or Enum.AnimationPriority.Movement end
+    if currentTrack then
+        currentTrack.Priority = canWalk and Enum.AnimationPriority.Action or Enum.AnimationPriority.Movement
+    end
 end)
 
-SpeedUp.MouseButton1Click:Connect(function() emoteSpeed = math.min(emoteSpeed + 0.25, 3) SpeedLabel.Text = "Speed: "..emoteSpeed.."x" if currentTrack then currentTrack:AdjustSpeed(emoteSpeed) end end)
-SpeedDown.MouseButton1Click:Connect(function() emoteSpeed = math.max(emoteSpeed - 0.25, 0.25) SpeedLabel.Text = "Speed: "..emoteSpeed.."x" if currentTrack then currentTrack:AdjustSpeed(emoteSpeed) end end)
-PrevPage.MouseButton1Click:Connect(function() if currentPage > 1 then currentPage -= 1 ShowPage(currentPage) end end)
-NextPage.MouseButton1Click:Connect(function() local total = math.ceil((currentMode == "Emotes" and #Emotes or #Animations) / EMOTES_PER_PAGE) if currentPage < total then currentPage += 1 ShowPage(currentPage) end end)
+SpeedUp.MouseButton1Click:Connect(function()
+    emoteSpeed = math.min(emoteSpeed + 0.25, 3)
+    SpeedLabel.Text = "Speed: "..string.format("%.2f", emoteSpeed).."x"
+    if currentTrack then currentTrack:AdjustSpeed(emoteSpeed) end
+end)
 
+SpeedDown.MouseButton1Click:Connect(function()
+    emoteSpeed = math.max(emoteSpeed - 0.25, 0.25)
+    SpeedLabel.Text = "Speed: "..string.format("%.2f", emoteSpeed).."x"
+    if currentTrack then currentTrack:AdjustSpeed(emoteSpeed) end
+end)
+
+PrevPage.MouseButton1Click:Connect(function() if currentPage > 1 then currentPage = currentPage - 1 ShowPage(currentPage) end end)
+NextPage.MouseButton1Click:Connect(function() local total = math.ceil((currentMode == "Emotes" and #Emotes or #Animations) / EMOTES_PER_PAGE) if currentPage < total then currentPage = currentPage + 1 ShowPage(currentPage) end end)
+
+ShowPage(1)
 LocalPlayer.CharacterAdded:Connect(function() task.wait(1) ShowPage(1) end)
-if LocalPlayer.Character then ShowPage(1) end
 
-StarterGui:SetCore("SendNotification",{Title = "Ready!", Text = "24 animaciones reales cargadas", Duration = 5})
+StarterGui:SetCore("SendNotification",{Title = "Ready!", Text = "24 animaciones + emotes", Duration = 5})
