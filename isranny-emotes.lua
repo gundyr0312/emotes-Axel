@@ -1,4 +1,4 @@
---- Keybind: "," - Emotes & Animations v4 (FULL PACKAGES - CORREGIDO)
+--- Keybind: "," - Emotes & Animations v4 (FULL PACKAGES - FUNCIONAL)
 local env=getgenv()
 if env.LastExecuted and tick()-env.LastExecuted<30 then return end
 env.LastExecuted=tick()
@@ -14,15 +14,25 @@ local ContextActionService = game:GetService("ContextActionService")
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
 local StarterGui = game:GetService("StarterGui")
+local RunService = game:GetService("RunService")
 
 local currentPage, EMOTES_PER_PAGE = 1, 300
 local currentMode = "Emotes"
 local emoteSpeed = 1
 local canWalk = false
 local currentTrack = nil
-local originalAnimateData = {} -- Guardar animaciones originales
+local originalAnimateData = {}
 
 local ELECTRIC_BLUE = Color3.fromRGB(0, 200, 255)
+
+-- Iconos/Emojis para cada animación
+local AnimationIcons = {
+    Astronaut = "🚀", Bubbly = "🫧", Cartoony = "🎨", Elder = "👴", Knight = "⚔️",
+    Levitation = "🌀", Mage = "🔮", Ninja = "🥷", Pirate = "🏴‍☠️", Robot = "🤖",
+    Stylish = "😎", SuperHero = "🦸", Toy = "🧸", Vampire = "🧛", Werewolf = "🐺",
+    Zombie = "🧟", Patrol = "👮", Confident = "😏", Popstar = "⭐", Cowboy = "🤠",
+    Ghost = "👻", Sneaky = "🥷", Princess = "👸", Anthro = "🐺"
+}
 
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "Emotes"
@@ -246,239 +256,45 @@ end, true, 2001, Enum.KeyCode.Comma)
 
 local LocalPlayer = Players.LocalPlayer
 
--- ============================================
 -- EMOTES NORMALES
--- ============================================
 local Emotes = {
-    { name = "Salute", id = 3360689775, icon = "rbxthumb://type=Asset&id=3360689775&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Salute", id = 3360689775, icon = "🙋", price = 0, lastupdated = 0, sort = {} },
+    { name = "Dance", id = 3185670745, icon = "💃", price = 0, lastupdated = 0, sort = {} },
+    { name = "Laugh", id = 3185674280, icon = "😂", price = 0, lastupdated = 0, sort = {} },
+    { name = "Wave", id = 3185676379, icon = "👋", price = 0, lastupdated = 0, sort = {} },
+    { name = "Point", id = 3185678778, icon = "👉", price = 0, lastupdated = 0, sort = {} },
+    { name = "Cheer", id = 3185681565, icon = "🎉", price = 0, lastupdated = 0, sort = {} },
 }
 
--- ============================================
--- ANIMACIONES COMPLETAS CON IDs REALES
--- Basado en el segundo código que me mostraste
--- ============================================
+-- ANIMACIONES COMPLETAS
 local Animations = {
-    { name = "Astronaut", ids = {
-        idle = 891621366,
-        idle2 = 891633237,
-        walk = 891667138,
-        run = 891636393,
-        jump = 891627522,
-        climb = 891609353,
-        fall = 891617961
-    }},
-    { name = "Bubbly", ids = {
-        idle = 910004836,
-        idle2 = 910009958,
-        walk = 910034870,
-        run = 910025107,
-        jump = 910016857,
-        fall = 910001910,
-        swimidle = 910030921,
-        swim = 910028158
-    }},
-    { name = "Cartoony", ids = {
-        idle = 742637544,
-        idle2 = 742638445,
-        walk = 742640026,
-        run = 742638842,
-        jump = 742637942,
-        climb = 742636889,
-        fall = 742637151
-    }},
-    { name = "Elder", ids = {
-        idle = 845397899,
-        idle2 = 845400520,
-        walk = 845403856,
-        run = 845386501,
-        jump = 845398858,
-        climb = 845392038,
-        fall = 845396048
-    }},
-    { name = "Knight", ids = {
-        idle = 657595757,
-        idle2 = 657568135,
-        walk = 657552124,
-        run = 657564596,
-        jump = 658409194,
-        climb = 658360781,
-        fall = 657600338
-    }},
-    { name = "Levitation", ids = {
-        idle = 616006778,
-        idle2 = 616008087,
-        walk = 616013216,
-        run = 616010382,
-        jump = 616008936,
-        climb = 616003713,
-        fall = 616005863
-    }},
-    { name = "Mage", ids = {
-        idle = 707742142,
-        idle2 = 707855907,
-        walk = 707897309,
-        run = 707861613,
-        jump = 707853694,
-        climb = 707826056,
-        fall = 707829716
-    }},
-    { name = "Ninja", ids = {
-        idle = 656117400,
-        idle2 = 656118341,
-        walk = 656121766,
-        run = 656118852,
-        jump = 656117878,
-        climb = 656114359,
-        fall = 656115606
-    }},
-    { name = "Pirate", ids = {
-        idle = 750781874,
-        idle2 = 750782770,
-        walk = 750785693,
-        run = 750783738,
-        jump = 750782230,
-        climb = 750779899,
-        fall = 750780242
-    }},
-    { name = "Robot", ids = {
-        idle = 616088211,
-        idle2 = 616089559,
-        walk = 616095330,
-        run = 616091570,
-        jump = 616090535,
-        climb = 616086039,
-        fall = 616087089
-    }},
-    { name = "Stylish", ids = {
-        idle = 616136790,
-        idle2 = 616138447,
-        walk = 616146177,
-        run = 616140816,
-        jump = 616139451,
-        climb = 616133594,
-        fall = 616134815
-    }},
-    { name = "SuperHero", ids = {
-        idle = 616111295,
-        idle2 = 616113536,
-        walk = 616122287,
-        run = 616117076,
-        jump = 616115533,
-        climb = 616104706,
-        fall = 616108001
-    }},
-    { name = "Toy", ids = {
-        idle = 782841498,
-        idle2 = 782845736,
-        walk = 782843345,
-        run = 782842708,
-        jump = 782847020,
-        climb = 782843869,
-        fall = 782846423
-    }},
-    { name = "Vampire", ids = {
-        idle = 1083445855,
-        idle2 = 1083450166,
-        walk = 1083473930,
-        run = 1083462077,
-        jump = 1083455352,
-        climb = 1083439238,
-        fall = 1083443587
-    }},
-    { name = "Werewolf", ids = {
-        idle = 1083195517,
-        idle2 = 1083214717,
-        walk = 1083178339,
-        run = 1083216690,
-        jump = 1083218792,
-        climb = 1083182000,
-        fall = 1083189019
-    }},
-    { name = "Zombie", ids = {
-        idle = 616158929,
-        idle2 = 616160636,
-        walk = 616168032,
-        run = 616163682,
-        jump = 616161997,
-        climb = 616156119,
-        fall = 616157476
-    }},
-    { name = "Patrol", ids = {
-        idle = 1149612882,
-        idle2 = 1150842221,
-        walk = 1151231493,
-        run = 1150967949,
-        jump = 1148811837,
-        climb = 1148811837,
-        fall = 1148863382
-    }},
-    { name = "Confident", ids = {
-        idle = 1069977950,
-        idle2 = 1069987858,
-        walk = 1070017263,
-        run = 1070001516,
-        jump = 1069984524,
-        climb = 1069946257,
-        fall = 1069973677
-    }},
-    { name = "Popstar", ids = {
-        idle = 1212900985,
-        idle2 = 1150842221,
-        walk = 1212980338,
-        run = 1212980348,
-        jump = 1212954642,
-        climb = 1213044953,
-        fall = 1212900995
-    }},
-    { name = "Cowboy", ids = {
-        idle = 1014390418,
-        idle2 = 1014398616,
-        walk = 1014421541,
-        run = 1014401683,
-        jump = 1014394726,
-        climb = 1014380606,
-        fall = 1014384571
-    }},
-    { name = "Ghost", ids = {
-        idle = 616006778,
-        idle2 = 616008087,
-        walk = 616013216,
-        run = 616013216,
-        jump = 616008936,
-        fall = 616005863,
-        swimidle = 616012453,
-        swim = 616011509
-    }},
-    { name = "Sneaky", ids = {
-        idle = 1132473842,
-        idle2 = 1132477671,
-        walk = 1132510133,
-        run = 1132494274,
-        jump = 1132489853,
-        climb = 1132461372,
-        fall = 1132469004
-    }},
-    { name = "Princess", ids = {
-        idle = 941003647,
-        idle2 = 941013098,
-        walk = 941028902,
-        run = 941015281,
-        jump = 941008832,
-        climb = 940996062,
-        fall = 941000007
-    }},
-    { name = "Anthro", ids = {
-        idle = 2510196951,
-        idle2 = 2510197257,
-        walk = 2510202577,
-        run = 2510198475,
-        jump = 2510197830,
-        climb = 2510192778,
-        fall = 2510195892
-    }},
+    { name = "Astronaut", ids = { idle = 891621366, idle2 = 891633237, walk = 891667138, run = 891636393, jump = 891627522, climb = 891609353, fall = 891617961 } },
+    { name = "Bubbly", ids = { idle = 910004836, idle2 = 910009958, walk = 910034870, run = 910025107, jump = 910016857, fall = 910001910, swimidle = 910030921, swim = 910028158 } },
+    { name = "Cartoony", ids = { idle = 742637544, idle2 = 742638445, walk = 742640026, run = 742638842, jump = 742637942, climb = 742636889, fall = 742637151 } },
+    { name = "Elder", ids = { idle = 845397899, idle2 = 845400520, walk = 845403856, run = 845386501, jump = 845398858, climb = 845392038, fall = 845396048 } },
+    { name = "Knight", ids = { idle = 657595757, idle2 = 657568135, walk = 657552124, run = 657564596, jump = 658409194, climb = 658360781, fall = 657600338 } },
+    { name = "Levitation", ids = { idle = 616006778, idle2 = 616008087, walk = 616013216, run = 616010382, jump = 616008936, climb = 616003713, fall = 616005863 } },
+    { name = "Mage", ids = { idle = 707742142, idle2 = 707855907, walk = 707897309, run = 707861613, jump = 707853694, climb = 707826056, fall = 707829716 } },
+    { name = "Ninja", ids = { idle = 656117400, idle2 = 656118341, walk = 656121766, run = 656118852, jump = 656117878, climb = 656114359, fall = 656115606 } },
+    { name = "Pirate", ids = { idle = 750781874, idle2 = 750782770, walk = 750785693, run = 750783738, jump = 750782230, climb = 750779899, fall = 750780242 } },
+    { name = "Robot", ids = { idle = 616088211, idle2 = 616089559, walk = 616095330, run = 616091570, jump = 616090535, climb = 616086039, fall = 616087089 } },
+    { name = "Stylish", ids = { idle = 616136790, idle2 = 616138447, walk = 616146177, run = 616140816, jump = 616139451, climb = 616133594, fall = 616134815 } },
+    { name = "SuperHero", ids = { idle = 616111295, idle2 = 616113536, walk = 616122287, run = 616117076, jump = 616115533, climb = 616104706, fall = 616108001 } },
+    { name = "Toy", ids = { idle = 782841498, idle2 = 782845736, walk = 782843345, run = 782842708, jump = 782847020, climb = 782843869, fall = 782846423 } },
+    { name = "Vampire", ids = { idle = 1083445855, idle2 = 1083450166, walk = 1083473930, run = 1083462077, jump = 1083455352, climb = 1083439238, fall = 1083443587 } },
+    { name = "Werewolf", ids = { idle = 1083195517, idle2 = 1083214717, walk = 1083178339, run = 1083216690, jump = 1083218792, climb = 1083182000, fall = 1083189019 } },
+    { name = "Zombie", ids = { idle = 616158929, idle2 = 616160636, walk = 616168032, run = 616163682, jump = 616161997, climb = 616156119, fall = 616157476 } },
+    { name = "Patrol", ids = { idle = 1149612882, idle2 = 1150842221, walk = 1151231493, run = 1150967949, jump = 1148811837, climb = 1148811837, fall = 1148863382 } },
+    { name = "Confident", ids = { idle = 1069977950, idle2 = 1069987858, walk = 1070017263, run = 1070001516, jump = 1069984524, climb = 1069946257, fall = 1069973677 } },
+    { name = "Popstar", ids = { idle = 1212900985, idle2 = 1150842221, walk = 1212980338, run = 1212980348, jump = 1212954642, climb = 1213044953, fall = 1212900995 } },
+    { name = "Cowboy", ids = { idle = 1014390418, idle2 = 1014398616, walk = 1014421541, run = 1014401683, jump = 1014394726, climb = 1014380606, fall = 1014384571 } },
+    { name = "Ghost", ids = { idle = 616006778, idle2 = 616008087, walk = 616013216, run = 616013216, jump = 616008936, fall = 616005863, swimidle = 616012453, swim = 616011509 } },
+    { name = "Sneaky", ids = { idle = 1132473842, idle2 = 1132477671, walk = 1132510133, run = 1132494274, jump = 1132489853, climb = 1132461372, fall = 1132469004 } },
+    { name = "Princess", ids = { idle = 941003647, idle2 = 941013098, walk = 941028902, run = 941015281, jump = 941008832, climb = 940996062, fall = 941000007 } },
+    { name = "Anthro", ids = { idle = 2510196951, idle2 = 2510197257, walk = 2510202577, run = 2510198475, jump = 2510197830, climb = 2510192778, fall = 2510195892 } },
 }
 
--- Función para guardar animaciones originales
+-- Guardar animaciones originales
 local function SaveOriginalAnimations(animate)
     if not originalAnimateData.saved then
         originalAnimateData = {
@@ -498,7 +314,7 @@ local function SaveOriginalAnimations(animate)
     end
 end
 
--- Función para restaurar animaciones originales
+-- Restaurar animaciones originales
 local function RestoreOriginalAnimations(animate)
     if originalAnimateData.saved then
         animate.idle.Animation1.AnimationId = originalAnimateData.idle1
@@ -515,72 +331,47 @@ local function RestoreOriginalAnimations(animate)
     end
 end
 
--- Función para aplicar animación completa
+-- Aplicar animación completa (visible para otros)
 local function ApplyFullAnimation(animData)
     local char = LocalPlayer.Character
     if not char then return end
     
     local animate = char:FindFirstChild("Animate")
     if not animate then
-        -- Si no existe el script Animate, crearlo
-        animate = Instance.new("LocalScript")
-        animate.Name = "Animate"
-        animate.Disabled = true
-        animate.Parent = char
-        
-        -- Crear la estructura básica
-        local tracks = {"idle", "walk", "run", "jump", "climb", "fall"}
-        for _, track in pairs(tracks) do
-            local folder = Instance.new("Folder")
-            folder.Name = track
-            folder.Parent = animate
-            local anim = Instance.new("Animation")
-            anim.Name = track == "idle" and "Animation1" or (track == "walk" and "WalkAnim" or (track == "run" and "RunAnim" or (track == "jump" and "JumpAnim" or (track == "climb" and "ClimbAnim" or "FallAnim"))))
-            anim.Parent = folder
-        end
-        
-        -- Para idle necesita Animation2 también
-        local idleFolder = animate.idle
-        local anim2 = Instance.new("Animation")
-        anim2.Name = "Animation2"
-        anim2.Parent = idleFolder
-        
-        animate.Disabled = false
+        StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No se encontró el script Animate", Duration = 2})
+        return
     end
     
-    -- Guardar originales si no se han guardado
     SaveOriginalAnimations(animate)
     
-    -- Aplicar nuevas animaciones
     if animData.ids.idle then
-        animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.idle
+        animate.idle.Animation1.AnimationId = "rbxassetid://" .. animData.ids.idle
     end
     if animData.ids.idle2 then
-        animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.idle2
+        animate.idle.Animation2.AnimationId = "rbxassetid://" .. animData.ids.idle2
     end
     if animData.ids.walk then
-        animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.walk
+        animate.walk.WalkAnim.AnimationId = "rbxassetid://" .. animData.ids.walk
     end
     if animData.ids.run then
-        animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.run
+        animate.run.RunAnim.AnimationId = "rbxassetid://" .. animData.ids.run
     end
     if animData.ids.jump then
-        animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.jump
+        animate.jump.JumpAnim.AnimationId = "rbxassetid://" .. animData.ids.jump
     end
     if animData.ids.climb then
-        animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.climb
+        animate.climb.ClimbAnim.AnimationId = "rbxassetid://" .. animData.ids.climb
     end
     if animData.ids.fall then
-        animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.fall
+        animate.fall.FallAnim.AnimationId = "rbxassetid://" .. animData.ids.fall
     end
     if animData.ids.swimidle and animate.swimidle then
-        animate.swimidle.SwimIdle.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.swimidle
+        animate.swimidle.SwimIdle.AnimationId = "rbxassetid://" .. animData.ids.swimidle
     end
     if animData.ids.swim and animate.swim then
-        animate.swim.Swim.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.swim
+        animate.swim.Swim.AnimationId = "rbxassetid://" .. animData.ids.swim
     end
     
-    -- Forzar actualización del personaje
     local hum = char:FindFirstChildOfClass("Humanoid")
     if hum then
         hum.Jump = true
@@ -588,17 +379,17 @@ local function ApplyFullAnimation(animData)
     
     BackFrame.Visible = false
     Open.Text = "Open"
-    StarterGui:SetCore("SendNotification", {Title = "✓ "..animData.name, Text = "Animación de locomoción aplicada", Duration = 3})
+    StarterGui:SetCore("SendNotification", {Title = "✓ "..animData.name, Text = "Animación aplicada (visible para todos)", Duration = 3})
 end
 
--- Función para emote normal (se mantiene igual pero corregida)
+-- Reproducir emote normal
 local function PlayEmote(name, id)
     local char = LocalPlayer.Character
     if not char then return end
     local hum = char:FindFirstChildOfClass("Humanoid")
     if not hum then return end
     
-    -- Limpiar cualquier animación de locomoción previa (restaurar originales)
+    -- Restaurar animaciones originales
     local animate = char:FindFirstChild("Animate")
     if animate and originalAnimateData.saved then
         RestoreOriginalAnimations(animate)
@@ -620,13 +411,19 @@ local function PlayEmote(name, id)
     Open.Text = "Open"
 end
 
--- Mostrar página (adaptado para las nuevas animaciones)
+-- Mostrar página con iconos
 local function ShowPage(page)
-    for _,v in pairs(Frame:GetChildren()) do if not v:IsA("UIGridLayout") then v:Destroy() end end
+    for _,v in pairs(Frame:GetChildren()) do 
+        if not v:IsA("UIGridLayout") then 
+            v:Destroy() 
+        end 
+    end
+    
     local list = currentMode == "Emotes" and Emotes or Animations
     local startIdx = (page - 1) * EMOTES_PER_PAGE + 1
     local endIdx = math.min(page * EMOTES_PER_PAGE, #list)
     local totalPages = math.ceil(#list / EMOTES_PER_PAGE)
+    
     PageLabel.Text = page.."/"..totalPages
     PrevPage.Visible = page > 1
     NextPage.Visible = page < totalPages
@@ -634,21 +431,61 @@ local function ShowPage(page)
     for i = startIdx, endIdx do
         local item = list[i]
         if item then
-            local btn = Instance.new("ImageButton")
+            local btn = Instance.new("TextButton")  -- Cambiado a TextButton para mostrar emojis
             btn.Name = currentMode == "Emotes" and tostring(item.id) or item.name
             btn:SetAttribute("name", item.name)
-            -- Usar icono genérico si no hay específico
-            btn.Image = item.icon or "rbxasset://textures/ui/GuiImagePlaceholder.png"
-            btn.BackgroundTransparency = 0.5
-            btn.BackgroundColor3 = Color3.new(0,0,0)
+            
+            -- Usar emoji como icono
+            local icon = ""
+            if currentMode == "Emotes" then
+                icon = item.icon or "🎭"
+            else
+                icon = AnimationIcons[item.name] or "🏃"
+            end
+            btn.Text = icon
+            btn.TextScaled = true
+            btn.TextSize = 30
+            btn.BackgroundTransparency = 0.3
+            btn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+            btn.TextColor3 = Color3.new(1, 1, 1)
             btn.LayoutOrder = i
             btn.Parent = Frame
+            
+            local aspect = Instance.new("UIAspectRatioConstraint", btn)
+            aspect.AspectType = Enum.AspectType.ScaleWithParentSize
+            
             Corner:Clone().Parent = btn
-            Instance.new("UIAspectRatioConstraint", btn).AspectType = Enum.AspectType.ScaleWithParentSize
+            
             local btnStroke = Instance.new("UIStroke", btn)
             btnStroke.Color = ELECTRIC_BLUE
             btnStroke.Thickness = 1.5
             btnStroke.Transparency = 0.6
+            
+            -- Tooltip con el nombre
+            local tooltip = Instance.new("TextLabel")
+            tooltip.Text = item.name
+            tooltip.TextScaled = true
+            tooltip.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            tooltip.BackgroundTransparency = 0.2
+            tooltip.TextColor3 = Color3.new(1, 1, 1)
+            tooltip.Size = UDim2.new(1, 0, 0.3, 0)
+            tooltip.Position = UDim2.new(0, 0, 1, 0)
+            tooltip.Visible = false
+            tooltip.Parent = btn
+            Corner:Clone().Parent = tooltip
+            
+            btn.MouseEnter:Connect(function()
+                EmoteName.Text = item.name
+                btnStroke.Transparency = 0
+                btnStroke.Thickness = 2.5
+                tooltip.Visible = true
+            end)
+            
+            btn.MouseLeave:Connect(function()
+                btnStroke.Transparency = 0.6
+                btnStroke.Thickness = 1.5
+                tooltip.Visible = false
+            end)
             
             btn.MouseButton1Click:Connect(function()
                 if currentMode == "Emotes" then
@@ -656,16 +493,6 @@ local function ShowPage(page)
                 else
                     ApplyFullAnimation(item)
                 end
-            end)
-            
-            btn.MouseEnter:Connect(function() 
-                EmoteName.Text = item.name 
-                btnStroke.Transparency = 0 
-                btnStroke.Thickness = 2.5 
-            end)
-            btn.MouseLeave:Connect(function() 
-                btnStroke.Transparency = 0.6 
-                btnStroke.Thickness = 1.5 
             end)
         end
     end
@@ -716,9 +543,8 @@ NextPage.MouseButton1Click:Connect(function()
     end 
 end)
 
--- Cuando el personaje se respawnea, restaurar página
 LocalPlayer.CharacterAdded:Connect(function() 
-    task.wait(1) 
+    task.wait(2)
     currentPage = 1
     ShowPage(1) 
 end)
