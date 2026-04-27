@@ -1556,9 +1556,6 @@ addEmote("Be Not Afraid", 70635223083942, 39, "Aug 08, 2025")
 addEmote("Macarena", 91274761264433, 39, "Aug 08, 2025")
 addEmote("Helicopter2", 119431985170060, 39, "Aug 08, 2025")
 addEmote("RONALDO", 97547486465713, 39, "Aug 08, 2025")
-
-
-
 addEmote("Nya Anime Dance", 126647057611522, 39, "Aug 08, 2025")
 addEmote("Do that thang", 113772829398170, 39, "Aug 08, 2025")
 addEmote("Squat?", 95441477641149, 39, "Aug 08, 2025")
