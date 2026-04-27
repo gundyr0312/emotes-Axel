@@ -1,4 +1,4 @@
---- Keybind: "," - Emotes v4 (SOLO EMOTES - CORREGIDO)
+--- Keybind: "," - Emotes v4 OPTIMIZED [7yd7/sniper-Emote]
 local env = getgenv()
 if env.LastExecuted and tick() - env.LastExecuted < 30 then
     return
@@ -6,28 +6,70 @@ end
 env.LastExecuted = tick()
 
 -- ============================================
--- CARGAR GUI
+-- 🔥 CONFIG + CACHE
 -- ============================================
-game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Loading...", Text = "Emotes", Duration = 5})
-
-if game:GetService("CoreGui"):FindFirstChild("Emotes") then
-    game:GetService("CoreGui"):FindFirstChild("Emotes"):Destroy()
-end
-wait(0.5)
-
+local HttpService = game:GetService("HttpService")
 local ContextActionService = game:GetService("ContextActionService")
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
 local StarterGui = game:GetService("StarterGui")
-local RunService = game:GetService("RunService")
 
+local EMOTES_URL = "https://raw.githubusercontent.com/7yd7/sniper-Emote/refs/heads/test/EmoteSniper.json"
+
+local Emotes = {}
+local totalPages = 1
 local currentPage, EMOTES_PER_PAGE = 1, 300
 local emoteSpeed = 1
 local canWalk = false
 local currentTrack = nil
 local currentTrackId = nil
 
+-- 🔥 CACHES PARA OPTIMIZACIÓN
+local animatorCache = {}
+local animCache = {}
+local buttonPool = {}
+local renderingPage = false
+local searchDebounce = false
+
 local ELECTRIC_BLUE = Color3.fromRGB(0, 200, 255)
+
+-- 🔥 FUNCIÓN NOTIFY SIN SPAM
+local function notify(t, txt, d)
+    task.spawn(function()
+        pcall(function()
+            StarterGui:SetCore("SendNotification", {
+                Title = t,
+                Text = txt,
+                Duration = d or 2
+            })
+        end)
+    end)
+end
+
+notify("Cargando...", "Descargando 38k emotes", 10)
+
+local success, result = pcall(function()
+    local data = game:HttpGet(EMOTES_URL)
+    return HttpService:JSONDecode(data)
+end)
+
+if success and result then
+    Emotes = result.data or result
+    totalPages = math.max(1, math.ceil(#Emotes / EMOTES_PER_PAGE)) -- 🔥 CACHE TOTAL PAGES
+    notify("✓ Emotes cargados", #Emotes.. " emotes listos", 3)
+else
+    warn("Error cargando emotes: ".. tostring(result))
+    Emotes = {{ name = "Salute", id = 3360689775, icon = "rbxthumb://type=Asset&id=3360689775&w=150&h=150" }}
+    totalPages = 1
+end
+
+-- ============================================
+-- GUI SETUP
+-- ============================================
+if CoreGui:FindFirstChild("Emotes") then
+    CoreGui:FindFirstChild("Emotes"):Destroy()
+end
+wait(0.5)
 
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "Emotes"
@@ -57,7 +99,7 @@ Open.Size = UDim2.new(0.05, 0, 0.114, 0)
 Open.Position = UDim2.new(0.05, 0, 0.25, 0)
 Open.Text = "Open"
 Open.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Open.TextColor3 = Color3.new(1, 1, 1)
+Open.TextColor3 = Color3.new(1, 1)
 Open.TextScaled = true
 Open.BackgroundTransparency = 0.5
 Open.MouseButton1Up:Connect(function()
@@ -79,8 +121,8 @@ EmoteName.AnchorPoint = Vector2.new(0.5, 0.5)
 EmoteName.Position = UDim2.new(-0.1, 0, 0.5, 0)
 EmoteName.Size = UDim2.new(0.2, 0, 0.2, 0)
 EmoteName.SizeConstraint = Enum.SizeConstraint.RelativeYY
-EmoteName.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-EmoteName.TextColor3 = Color3.new(1, 1, 1)
+EmoteName.BackgroundColor3 = Color3.fromRGB(30, 30)
+EmoteName.TextColor3 = Color3.new(1, 1)
 EmoteName.Text = "Select"
 EmoteName.Parent = BackFrame
 Corner:Clone().Parent = EmoteName
@@ -111,7 +153,7 @@ WalkButton.AnchorPoint = Vector2.new(0.5, 0.5)
 WalkButton.Text = "Walk: OFF"
 WalkButton.TextScaled = true
 WalkButton.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
-WalkButton.TextColor3 = Color3.new(1, 1, 1)
+WalkButton.TextColor3 = Color3.new(1, 1)
 WalkButton.Parent = BackFrame
 Corner:Clone().Parent = WalkButton
 local WalkStroke = Instance.new("UIStroke", WalkButton)
@@ -125,7 +167,7 @@ SpeedLabel.AnchorPoint = Vector2.new(0.5, 0.5)
 SpeedLabel.Text = "Speed: 1x"
 SpeedLabel.TextScaled = true
 SpeedLabel.BackgroundColor3 = Color3.new(0, 0, 0)
-SpeedLabel.TextColor3 = Color3.new(1, 1, 1)
+SpeedLabel.TextColor3 = Color3.new(1, 1)
 SpeedLabel.BackgroundTransparency = 0.3
 SpeedLabel.Parent = BackFrame
 Corner:Clone().Parent = SpeedLabel
@@ -140,7 +182,7 @@ SpeedUp.AnchorPoint = Vector2.new(0.5, 0.5)
 SpeedUp.Text = "+"
 SpeedUp.TextScaled = true
 SpeedUp.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-SpeedUp.TextColor3 = Color3.new(1, 1, 1)
+SpeedUp.TextColor3 = Color3.new(1, 1)
 SpeedUp.Parent = BackFrame
 Corner:Clone().Parent = SpeedUp
 local UpStroke = Instance.new("UIStroke", SpeedUp)
@@ -154,7 +196,7 @@ SpeedDown.AnchorPoint = Vector2.new(0.5, 0.5)
 SpeedDown.Text = "-"
 SpeedDown.TextScaled = true
 SpeedDown.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-SpeedDown.TextColor3 = Color3.new(1, 1, 1)
+SpeedDown.TextColor3 = Color3.new(1, 1)
 SpeedDown.Parent = BackFrame
 Corner:Clone().Parent = SpeedDown
 local DownStroke = Instance.new("UIStroke", SpeedDown)
@@ -168,7 +210,7 @@ PrevPage.AnchorPoint = Vector2.new(0.5, 0.5)
 PrevPage.Text = "<"
 PrevPage.TextScaled = true
 PrevPage.BackgroundColor3 = Color3.new(0, 0, 0)
-PrevPage.TextColor3 = Color3.new(1, 1, 1)
+PrevPage.TextColor3 = Color3.new(1, 1)
 PrevPage.BackgroundTransparency = 0.3
 PrevPage.Parent = BackFrame
 Corner:Clone().Parent = PrevPage
@@ -180,7 +222,7 @@ local PageLabel = Instance.new("TextLabel")
 PageLabel.Position = UDim2.new(0.34, 0, -0.075, 0)
 PageLabel.Size = UDim2.new(0.1, 0, 0.1, 0)
 PageLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-PageLabel.Text = "1/1"
+PageLabel.Text = "1/".. totalPages
 PageLabel.TextScaled = true
 PageLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
 PageLabel.BackgroundColor3 = Color3.new(0, 0, 0)
@@ -198,7 +240,7 @@ NextPage.AnchorPoint = Vector2.new(0.5, 0.5)
 NextPage.Text = ">"
 NextPage.TextScaled = true
 NextPage.BackgroundColor3 = Color3.new(0, 0, 0)
-NextPage.TextColor3 = Color3.new(1, 1, 1)
+NextPage.TextColor3 = Color3.new(1, 1)
 NextPage.BackgroundTransparency = 0.3
 NextPage.Parent = BackFrame
 Corner:Clone().Parent = NextPage
@@ -210,10 +252,10 @@ local SearchBar = Instance.new("TextBox")
 SearchBar.Position = UDim2.new(0.66, 0, -0.075, 0)
 SearchBar.Size = UDim2.new(0.4, 0, 0.1, 0)
 SearchBar.AnchorPoint = Vector2.new(0.5, 0.5)
-SearchBar.PlaceholderText = "Search"
+SearchBar.PlaceholderText = "Search 38k emotes..."
 SearchBar.TextScaled = true
 SearchBar.BackgroundColor3 = Color3.new(0, 0, 0)
-SearchBar.TextColor3 = Color3.new(1, 1, 1)
+SearchBar.TextColor3 = Color3.new(1, 1)
 SearchBar.BackgroundTransparency = 0.3
 SearchBar.Parent = BackFrame
 Corner:Clone().Parent = SearchBar
@@ -221,14 +263,24 @@ local SearchStroke = Instance.new("UIStroke", SearchBar)
 SearchStroke.Color = ELECTRIC_BLUE
 SearchStroke.Thickness = 2
 
+-- 🔥 SEARCH CON DEBOUNCE (OPTIMIZACIÓN #3)
 SearchBar:GetPropertyChangedSignal("Text"):Connect(function()
-    local text = SearchBar.Text:lower()
-    for _, btn in pairs(Frame:GetChildren()) do
-        if btn:IsA("GuiButton") then
-            local name = btn:GetAttribute("name") or ""
-            btn.Visible = text == "" or name:lower():find(text)
+    if searchDebounce then return end
+    searchDebounce = true
+
+    task.delay(0.15, function()
+        local lowerText = SearchBar.Text:lower() -- 🔥 OPTIMIZACIÓN #9
+
+        for _, btn in pairs(Frame:GetChildren()) do
+            if btn:IsA("GuiButton") then
+                local name = btn:GetAttribute("name") or ""
+                local lowerName = name:lower() -- 🔥 OPTIMIZACIÓN #9
+                btn.Visible = lowerText == "" or lowerName:find(lowerText)
+            end
         end
-    end
+
+        searchDebounce = false
+    end)
 end)
 
 ContextActionService:BindCoreActionAtPriority("Emote Menu", function(_, s)
@@ -241,48 +293,23 @@ end, true, 2001, Enum.KeyCode.Comma)
 
 local LocalPlayer = Players.LocalPlayer
 
--- ============================================
--- EMOTES - PEGA TUS EMOTES AQUÍ
--- ============================================
-local Emotes = {
-    { name = "Salute", id = 3360689775, icon = "rbxthumb://type=Asset&id=3360689775&w=150&h=150" },
-    { name = "Stadium", id = 3360686498, icon = "rbxthumb://type=Asset&id=3360686498&w=150&h=150" },
-    { name = "Tilt", id = 3360692915, icon = "rbxthumb://type=Asset&id=3360692915&w=150&h=150" },
-    { name = "Shrug", id = 3576968026, icon = "rbxthumb://type=Asset&id=3576968026&w=150&h=150" },
-    -- Agrega más emotes aquí con el mismo formato
-}
-
--- 🔥 FUNCIÓN OPTIMIZADA Y CORREGIDA
+-- 🔥 FUNCIÓN OPTIMIZADA CON CACHE DE ANIMATOR (#5) Y ANIMATION (#7)
 local function PlayEmote(name, id)
     local char = LocalPlayer.Character
-    if not char then
-        StarterGui:SetCore("SendNotification", {Title = "Error", Text = "Esperando personaje...", Duration = 2})
-        return
-    end
+    if not char then return end
 
     local hum = char:FindFirstChildOfClass("Humanoid")
-    if not hum then
-        StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No hay Humanoid", Duration = 2})
-        return
-    end
+    if not hum then return end
 
-    -- Esperar a que el Animator exista
-    local animator = hum:FindFirstChildOfClass("Animator")
+    -- 🔥 CACHE DE ANIMATOR (OPTIMIZACIÓN #5)
+    local animator = animatorCache[hum]
     if not animator then
-        local attemps = 0
-        repeat
-            task.wait(0.1)
-            animator = hum:FindFirstChildOfClass("Animator")
-            attemps = attemps + 1
-            if attemps > 20 then break end
-        until animator
-        if not animator then
-            StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No hay Animator", Duration = 2})
-            return
-        end
+        animator = hum:FindFirstChildOfClass("Animator")
+        animatorCache[hum] = animator
     end
+    if not animator then return end
 
-    local animationId = "rbxassetid://" .. id
+    local animationId = "rbxassetid://".. id
 
     -- 🔥 SI ES EL MISMO EMOTE -> REINICIAR
     if currentTrack and currentTrackId == id then
@@ -291,154 +318,175 @@ local function PlayEmote(name, id)
             currentTrack.TimePosition = 0
             currentTrack:Play()
         end)
-        StarterGui:SetCore("SendNotification", {Title = "✓ " .. name, Text = "Reiniciado", Duration = 1})
+        notify("✓ ".. name, "Reiniciado", 1)
         BackFrame.Visible = false
         Open.Text = "Open"
         return
     end
 
-    -- 🔥 DETENER EMOTE ANTERIOR
-    if currentTrack then
-        pcall(function()
-            currentTrack:Stop(0)
-        end)
-        currentTrack = nil
-        currentTrackId = nil
-    end
-
-    -- Detener otros tracks de prioridad Action
+    -- 🔥 LIMPIAR OTROS EMOTES (USANDO CACHE DE ANIMATOR)
     for _, track in pairs(animator:GetPlayingAnimationTracks()) do
-        if track.Priority == Enum.AnimationPriority.Action then
-            pcall(function() track:Stop(0) end)
-        end
+        pcall(function()
+            track:Stop(0)
+            track:Destroy()
+        end)
     end
 
-    task.wait(0.05)
+    currentTrack = nil
+    currentTrackId = nil
+    task.wait(0.03)
 
-    -- 🔥 CREAR NUEVO EMOTE
-    local anim = Instance.new("Animation")
-    anim.AnimationId = animationId
+    -- 🔥 CACHE DE ANIMATION OBJECT (OPTIMIZACIÓN #7)
+    local anim = animCache[id]
+    if not anim then
+        anim = Instance.new("Animation")
+        anim.AnimationId = animationId
+        animCache[id] = anim
+    end
 
-    local success, track = pcall(function()
-        return animator:LoadAnimation(anim)
+    local track = animator:LoadAnimation(anim)
+    currentTrack = track
+    currentTrackId = id
+
+    -- 🔥 CONFIG
+    track.Priority = canWalk and Enum.AnimationPriority.Movement or Enum.AnimationPriority.Action
+    track.Looped = canWalk
+    track:AdjustSpeed(emoteSpeed)
+
+    track:Play(0)
+
+    -- 🔥 LIMPIEZA SEGURA CON DISCONNECT (OPTIMIZACIÓN #8)
+    local conn
+    conn = track.Stopped:Connect(function()
+        conn:Disconnect() -- 🔥 PREVIENE LEAKS
+        if currentTrack == track then
+            currentTrack = nil
+            currentTrackId = nil
+        end
+        pcall(function()
+            track:Destroy()
+            -- NO destruir anim porque está cacheado
+        end)
     end)
 
-    if success and track then
-        currentTrack = track
-        currentTrackId = id
-
-        track.Priority = canWalk and Enum.AnimationPriority.Movement or Enum.AnimationPriority.Action
-        track.Looped = canWalk
-        track:AdjustSpeed(emoteSpeed)
-        
-        pcall(function() track:Play() end)
-
-        -- 🔥 LIMPIEZA AL TERMINAR
-        task.spawn(function()
-            while track and track.IsPlaying do
-                task.wait(0.5)
-            end
-            if currentTrack == track then
-                currentTrack = nil
-                currentTrackId = nil
-            end
-            pcall(function()
-                if track then track:Destroy() end
-                anim:Destroy()
-            end)
-        end)
-
-        StarterGui:SetCore("SendNotification", {Title = "✓ " .. name, Text = "Emote reproducido", Duration = 2})
-    else
-        StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No se pudo reproducir: " .. name, Duration = 2})
-    end
+    notify("✓ "..name, "Emote reproducido", 2)
 
     BackFrame.Visible = false
     Open.Text = "Open"
 end
 
--- Mostrar página
+-- 🔥 POOL DE BOTONES PARA NO DESTRUIR (OPTIMIZACIÓN #1)
+local function getOrCreateButton(index)
+    local btn = buttonPool[index]
+    if not btn then
+        btn = Instance.new("ImageButton")
+        btn.BackgroundTransparency = 0.3
+        btn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+        btn.LayoutOrder = index
+        btn.Parent = Frame
+
+        local aspect = Instance.new("UIAspectRatioConstraint", btn)
+        aspect.AspectType = Enum.AspectType.ScaleWithParentSize
+
+        Corner:Clone().Parent = btn
+
+        local btnStroke = Instance.new("UIStroke", btn)
+        btnStroke.Color = ELECTRIC_BLUE
+        btnStroke.Thickness = 1
+        btnStroke.Transparency = 0.6
+
+        local tooltip = Instance.new("TextLabel")
+        tooltip.TextScaled = true
+        tooltip.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        tooltip.BackgroundTransparency = 0.2
+        tooltip.TextColor3 = Color3.new(1, 1)
+        tooltip.Size = UDim2.new(1, 0, 0.3, 0)
+        tooltip.Position = UDim2.new(0, 0, 1, 0)
+        tooltip.Visible = false
+        tooltip.Parent = btn
+        Corner:Clone().Parent = tooltip
+
+        buttonPool[index] = btn
+    end
+    return btn
+end
+
+-- 🔥 SHOWPAGE OPTIMIZADO (OPTIMIZACIÓN #1, #2, #10)
 local function ShowPage(page)
+    if renderingPage then return end -- 🔥 OPTIMIZACIÓN #10
+    renderingPage = true
+
+    -- 🔥 OCULTAR TODOS EN VEZ DE DESTRUIR (OPTIMIZACIÓN #1)
     for _, v in pairs(Frame:GetChildren()) do
-        if not v:IsA("UIGridLayout") then
-            v:Destroy()
+        if v:IsA("GuiButton") then
+            v.Visible = false
         end
     end
 
     if #Emotes == 0 then
-        local emptyLabel = Instance.new("TextLabel")
-        emptyLabel.Size = UDim2.new(1, 0, 1, 0)
+        local emptyLabel = getOrCreateButton(1)
+        emptyLabel.Image = ""
         emptyLabel.BackgroundTransparency = 1
-        emptyLabel.Text = "No hay emotes agregados\nPégalos en la lista 'Emotes'"
-        emptyLabel.TextColor3 = Color3.new(1, 1, 1)
-        emptyLabel.TextScaled = true
-        emptyLabel.Parent = Frame
+        emptyLabel.Visible = true
         PageLabel.Text = "0/0"
         PrevPage.Visible = false
         NextPage.Visible = false
+        renderingPage = false
         return
     end
 
     local startIdx = (page - 1) * EMOTES_PER_PAGE + 1
     local endIdx = math.min(page * EMOTES_PER_PAGE, #Emotes)
-    local totalPages = math.ceil(#Emotes / EMOTES_PER_PAGE)
 
-    PageLabel.Text = page.. "/".. totalPages
+    PageLabel.Text = page.. "/".. totalPages -- 🔥 USA CACHE (OPTIMIZACIÓN #2)
     PrevPage.Visible = page > 1
     NextPage.Visible = page < totalPages
 
+    local btnIndex = 1
     for i = startIdx, endIdx do
         local item = Emotes[i]
         if item then
-            local btn = Instance.new("ImageButton")
+            local btn = getOrCreateButton(btnIndex)
             btn.Name = tostring(item.id)
             btn:SetAttribute("name", item.name)
             btn.Image = item.icon or "rbxasset://textures/ui/GuiImagePlaceholder.png"
-            btn.BackgroundTransparency = 0.3
-            btn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+            btn.Visible = true
             btn.LayoutOrder = i
-            btn.Parent = Frame
 
-            local aspect = Instance.new("UIAspectRatioConstraint", btn)
-            aspect.AspectType = Enum.AspectType.ScaleWithParentSize
+            local btnStroke = btn:FindFirstChildOfClass("UIStroke")
+            local tooltip = btn:FindFirstChild("TextLabel")
 
-            Corner:Clone().Parent = btn
-
-            local btnStroke = Instance.new("UIStroke", btn)
-            btnStroke.Color = ELECTRIC_BLUE
-            btnStroke.Thickness = 1
-            btnStroke.Transparency = 0.6
-
-            local tooltip = Instance.new("TextLabel")
-            tooltip.Text = item.name
-            tooltip.TextScaled = true
-            tooltip.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-            tooltip.BackgroundTransparency = 0.2
-            tooltip.TextColor3 = Color3.new(1, 1, 1)
-            tooltip.Size = UDim2.new(1, 0, 0.3, 0)
-            tooltip.Position = UDim2.new(0, 0, 1, 0)
-            tooltip.Visible = false
-            tooltip.Parent = btn
-            Corner:Clone().Parent = tooltip
+            -- 🔥 LIMPIAR CONEXIONES VIEJAS
+            for _, conn in pairs(btn:GetConnections("MouseEnter")) do conn:Disconnect() end
+            for _, conn in pairs(btn:GetConnections("MouseLeave")) do conn:Disconnect() end
+            for _, conn in pairs(btn:GetConnections("MouseButton1Click")) do conn:Disconnect() end
 
             btn.MouseEnter:Connect(function()
                 EmoteName.Text = item.name
-                btnStroke.Transparency = 0
-                btnStroke.Thickness = 2
-                tooltip.Visible = true
+                if btnStroke then
+                    btnStroke.Transparency = 0
+                    btnStroke.Thickness = 2
+                end
+                if tooltip then tooltip.Visible = true end
             end)
 
             btn.MouseLeave:Connect(function()
-                btnStroke.Transparency = 0.6
-                btnStroke.Thickness = 1
-                tooltip.Visible = false
+                if btnStroke then
+                    btnStroke.Transparency = 0.6
+                    btnStroke.Thickness = 1
+                end
+                if tooltip then tooltip.Visible = false end
             end)
 
             btn.MouseButton1Click:Connect(function()
                 PlayEmote(item.name, item.id)
             end)
+
+            btnIndex = btnIndex + 1
         end
     end
+
+    renderingPage = false -- 🔥 OPTIMIZACIÓN #10
 end
 
 -- Eventos de botones
@@ -482,8 +530,7 @@ PrevPage.MouseButton1Click:Connect(function()
 end)
 
 NextPage.MouseButton1Click:Connect(function()
-    local total = math.ceil(#Emotes / EMOTES_PER_PAGE)
-    if currentPage < total then
+    if currentPage < totalPages then
         currentPage = currentPage + 1
         ShowPage(currentPage)
     end
@@ -493,6 +540,7 @@ LocalPlayer.CharacterAdded:Connect(function()
     task.wait(2)
     currentTrack = nil
     currentTrackId = nil
+    animatorCache = {} -- 🔥 LIMPIAR CACHE AL RESPAWNEAR
     currentPage = 1
     ShowPage(1)
 end)
@@ -501,8 +549,4 @@ if LocalPlayer.Character then
     ShowPage(1)
 end
 
-StarterGui:SetCore("SendNotification", {
-    Title = "Ready!",
-    Text = "Press , to open - ".. #Emotes.. " emotes loaded",
-    Duration = 5
-})
+notify("Ready!", "Press, to open - ".. #Emotes.. " emotes loaded", 5)
