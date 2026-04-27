@@ -1,4 +1,4 @@
---- Keybind: "," - Emotes v4 OPTIMIZED [7yd7/sniper-Emote]
+--- Keybind: "," - Emotes v4 [7yd7/sniper-Emote] FIXED
 local env = getgenv()
 if env.LastExecuted and tick() - env.LastExecuted < 30 then
     return
@@ -18,7 +18,7 @@ local EMOTES_URL = "https://raw.githubusercontent.com/7yd7/sniper-Emote/refs/hea
 
 local Emotes = {}
 local totalPages = 1
-local currentPage, EMOTES_PER_PAGE = 1, 300
+local currentPage, EMOTES_PER_PAGE = 1, 20 -- 🔥 CAMBIADO A 20
 local emoteSpeed = 1
 local canWalk = false
 local currentTrack = nil
@@ -54,12 +54,14 @@ local success, result = pcall(function()
 end)
 
 if success and result then
-    Emotes = result.data or result
-    totalPages = math.max(1, math.ceil(#Emotes / EMOTES_PER_PAGE)) -- 🔥 CACHE TOTAL PAGES
+    Emotes = result.data or result -- El JSON viene como {data = [...]}
+    totalPages = math.max(1, math.ceil(#Emotes / EMOTES_PER_PAGE))
     notify("✓ Emotes cargados", #Emotes.. " emotes listos", 3)
 else
     warn("Error cargando emotes: ".. tostring(result))
-    Emotes = {{ name = "Salute", id = 3360689775, icon = "rbxthumb://type=Asset&id=3360689775&w=150&h=150" }}
+    Emotes = {
+        { name = "Salute", id = 3360689775, icon = "rbxthumb://type=Asset&id=3360689775&w=150&h=150" },
+    }
     totalPages = 1
 end
 
@@ -210,7 +212,7 @@ PrevPage.AnchorPoint = Vector2.new(0.5, 0.5)
 PrevPage.Text = "<"
 PrevPage.TextScaled = true
 PrevPage.BackgroundColor3 = Color3.new(0, 0, 0)
-PrevPage.TextColor3 = Color3.new(1, 1)
+PrevPage.TextColor3 = Color3.new(1, 1, 1)
 PrevPage.BackgroundTransparency = 0.3
 PrevPage.Parent = BackFrame
 Corner:Clone().Parent = PrevPage
@@ -263,18 +265,18 @@ local SearchStroke = Instance.new("UIStroke", SearchBar)
 SearchStroke.Color = ELECTRIC_BLUE
 SearchStroke.Thickness = 2
 
--- 🔥 SEARCH CON DEBOUNCE (OPTIMIZACIÓN #3)
+-- 🔥 SEARCH CON DEBOUNCE
 SearchBar:GetPropertyChangedSignal("Text"):Connect(function()
     if searchDebounce then return end
     searchDebounce = true
 
     task.delay(0.15, function()
-        local lowerText = SearchBar.Text:lower() -- 🔥 OPTIMIZACIÓN #9
+        local lowerText = SearchBar.Text:lower()
 
         for _, btn in pairs(Frame:GetChildren()) do
             if btn:IsA("GuiButton") then
                 local name = btn:GetAttribute("name") or ""
-                local lowerName = name:lower() -- 🔥 OPTIMIZACIÓN #9
+                local lowerName = name:lower()
                 btn.Visible = lowerText == "" or lowerName:find(lowerText)
             end
         end
@@ -293,7 +295,7 @@ end, true, 2001, Enum.KeyCode.Comma)
 
 local LocalPlayer = Players.LocalPlayer
 
--- 🔥 FUNCIÓN OPTIMIZADA CON CACHE DE ANIMATOR (#5) Y ANIMATION (#7)
+-- 🔥 FUNCIÓN OPTIMIZADA
 local function PlayEmote(name, id)
     local char = LocalPlayer.Character
     if not char then return end
@@ -301,7 +303,6 @@ local function PlayEmote(name, id)
     local hum = char:FindFirstChildOfClass("Humanoid")
     if not hum then return end
 
-    -- 🔥 CACHE DE ANIMATOR (OPTIMIZACIÓN #5)
     local animator = animatorCache[hum]
     if not animator then
         animator = hum:FindFirstChildOfClass("Animator")
@@ -311,7 +312,6 @@ local function PlayEmote(name, id)
 
     local animationId = "rbxassetid://".. id
 
-    -- 🔥 SI ES EL MISMO EMOTE -> REINICIAR
     if currentTrack and currentTrackId == id then
         pcall(function()
             currentTrack:Stop(0)
@@ -324,7 +324,6 @@ local function PlayEmote(name, id)
         return
     end
 
-    -- 🔥 LIMPIAR OTROS EMOTES (USANDO CACHE DE ANIMATOR)
     for _, track in pairs(animator:GetPlayingAnimationTracks()) do
         pcall(function()
             track:Stop(0)
@@ -336,7 +335,6 @@ local function PlayEmote(name, id)
     currentTrackId = nil
     task.wait(0.03)
 
-    -- 🔥 CACHE DE ANIMATION OBJECT (OPTIMIZACIÓN #7)
     local anim = animCache[id]
     if not anim then
         anim = Instance.new("Animation")
@@ -348,24 +346,21 @@ local function PlayEmote(name, id)
     currentTrack = track
     currentTrackId = id
 
-    -- 🔥 CONFIG
     track.Priority = canWalk and Enum.AnimationPriority.Movement or Enum.AnimationPriority.Action
     track.Looped = canWalk
     track:AdjustSpeed(emoteSpeed)
 
     track:Play(0)
 
-    -- 🔥 LIMPIEZA SEGURA CON DISCONNECT (OPTIMIZACIÓN #8)
     local conn
     conn = track.Stopped:Connect(function()
-        conn:Disconnect() -- 🔥 PREVIENE LEAKS
+        conn:Disconnect()
         if currentTrack == track then
             currentTrack = nil
             currentTrackId = nil
         end
         pcall(function()
             track:Destroy()
-            -- NO destruir anim porque está cacheado
         end)
     end)
 
@@ -375,14 +370,13 @@ local function PlayEmote(name, id)
     Open.Text = "Open"
 end
 
--- 🔥 POOL DE BOTONES PARA NO DESTRUIR (OPTIMIZACIÓN #1)
+-- 🔥 POOL DE BOTONES ARREGLADO
 local function getOrCreateButton(index)
     local btn = buttonPool[index]
     if not btn then
         btn = Instance.new("ImageButton")
         btn.BackgroundTransparency = 0.3
         btn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-        btn.LayoutOrder = index
         btn.Parent = Frame
 
         local aspect = Instance.new("UIAspectRatioConstraint", btn)
@@ -411,12 +405,12 @@ local function getOrCreateButton(index)
     return btn
 end
 
--- 🔥 SHOWPAGE OPTIMIZADO (OPTIMIZACIÓN #1, #2, #10)
+-- 🔥 SHOWPAGE ARREGLADO
 local function ShowPage(page)
-    if renderingPage then return end -- 🔥 OPTIMIZACIÓN #10
+    if renderingPage then return end
     renderingPage = true
 
-    -- 🔥 OCULTAR TODOS EN VEZ DE DESTRUIR (OPTIMIZACIÓN #1)
+    -- OCULTAR TODOS LOS BOTONES
     for _, v in pairs(Frame:GetChildren()) do
         if v:IsA("GuiButton") then
             v.Visible = false
@@ -424,13 +418,6 @@ local function ShowPage(page)
     end
 
     if #Emotes == 0 then
-        local emptyLabel = getOrCreateButton(1)
-        emptyLabel.Image = ""
-        emptyLabel.BackgroundTransparency = 1
-        emptyLabel.Visible = true
-        PageLabel.Text = "0/0"
-        PrevPage.Visible = false
-        NextPage.Visible = false
         renderingPage = false
         return
     end
@@ -438,7 +425,7 @@ local function ShowPage(page)
     local startIdx = (page - 1) * EMOTES_PER_PAGE + 1
     local endIdx = math.min(page * EMOTES_PER_PAGE, #Emotes)
 
-    PageLabel.Text = page.. "/".. totalPages -- 🔥 USA CACHE (OPTIMIZACIÓN #2)
+    PageLabel.Text = page.. "/".. totalPages
     PrevPage.Visible = page > 1
     NextPage.Visible = page < totalPages
 
@@ -449,14 +436,16 @@ local function ShowPage(page)
             local btn = getOrCreateButton(btnIndex)
             btn.Name = tostring(item.id)
             btn:SetAttribute("name", item.name)
-            btn.Image = item.icon or "rbxasset://textures/ui/GuiImagePlaceholder.png"
+            -- 🔥 FALLBACK DE ICON SI NO EXISTE
+            btn.Image = item.icon or "rbxthumb://type=Asset&id="..item.id.."&w=150&h=150"
             btn.Visible = true
             btn.LayoutOrder = i
 
             local btnStroke = btn:FindFirstChildOfClass("UIStroke")
             local tooltip = btn:FindFirstChild("TextLabel")
+            if tooltip then tooltip.Text = item.name end
 
-            -- 🔥 LIMPIAR CONEXIONES VIEJAS
+            -- Limpiar conexiones viejas
             for _, conn in pairs(btn:GetConnections("MouseEnter")) do conn:Disconnect() end
             for _, conn in pairs(btn:GetConnections("MouseLeave")) do conn:Disconnect() end
             for _, conn in pairs(btn:GetConnections("MouseButton1Click")) do conn:Disconnect() end
@@ -486,7 +475,7 @@ local function ShowPage(page)
         end
     end
 
-    renderingPage = false -- 🔥 OPTIMIZACIÓN #10
+    renderingPage = false
 end
 
 -- Eventos de botones
@@ -540,7 +529,7 @@ LocalPlayer.CharacterAdded:Connect(function()
     task.wait(2)
     currentTrack = nil
     currentTrackId = nil
-    animatorCache = {} -- 🔥 LIMPIAR CACHE AL RESPAWNEAR
+    animatorCache = {}
     currentPage = 1
     ShowPage(1)
 end)
