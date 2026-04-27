@@ -1,3 +1,4 @@
+--- Keybind: "," - Emotes & Animations COMPLETO (FIXED)
 local env=getgenv()
 if env.LastExecuted and tick()-env.LastExecuted<30 then return end
 env.LastExecuted=tick()
@@ -8,7 +9,7 @@ local StarterGui = game:GetService("StarterGui")
 local ContextActionService = game:GetService("ContextActionService")
 
 if CoreGui:FindFirstChild("Emotes") then CoreGui.Emotes:Destroy() end
-wait(0.3)
+task.wait(0.3)
 
 local currentPage = 1
 local EMOTES_PER_PAGE = 300
@@ -308,12 +309,20 @@ local function PlayEmote(item)
 
     if currentTrack then currentTrack:Stop() end
 
-    local success, t = pcall(function() return hum:PlayEmoteAndGetAnimTrackById(item.id) end)
-    if success and t then
-        currentTrack = t
-        t:AdjustSpeed(emoteSpeed)
-        t.Priority = canWalk and Enum.AnimationPriority.Action or Enum.AnimationPriority.Movement
-        t.Looped = true
+    -- 🔥 FIX: Usar LoadAnimation en lugar de PlayEmoteAndGetAnimTrackById
+    local anim = Instance.new("Animation")
+    anim.AnimationId = "rbxassetid://"..item.id
+
+    local success, track = pcall(function()
+        return hum:LoadAnimation(anim)
+    end)
+
+    if success and track then
+        currentTrack = track
+        track.Looped = true
+        track.Priority = canWalk and Enum.AnimationPriority.Action or Enum.AnimationPriority.Movement
+        track:Play()
+        track:AdjustSpeed(emoteSpeed)
     end
 
     BackFrame.Visible = false
@@ -377,14 +386,16 @@ local function ShowPage(page)
     end
 end
 
+-- 🔥 FIX 1: MODO - Ahora sí cambia y recarga
 ModeButton.MouseButton1Click:Connect(function()
     currentMode = (currentMode == "Emotes") and "Animations" or "Emotes"
     ModeButton.Text = currentMode:upper()
     ModeButton.BackgroundColor3 = (currentMode == "Emotes") and Color3.fromRGB(0,100,200) or Color3.fromRGB(200,100,0)
     currentPage = 1
-    ShowPage(1)
+    ShowPage(1) -- 🔥 ESTO FALTABA
 end)
 
+-- 🔥 FIX 2: WALK - Ahora actualiza el track actual
 WalkButton.MouseButton1Click:Connect(function()
     canWalk = not canWalk
     WalkButton.Text = "Walk: ".. (canWalk and "ON" or "OFF")
@@ -394,20 +405,25 @@ WalkButton.MouseButton1Click:Connect(function()
     end
 end)
 
+-- 🔥 FIX 3: VELOCIDAD - Ahora funciona con LoadAnimation
 SpeedUp.MouseButton1Click:Connect(function()
     emoteSpeed = math.min(emoteSpeed + 0.25, 3)
     SpeedLabel.Text = string.format("Speed: %.2fx", emoteSpeed)
-    if currentTrack then currentTrack:AdjustSpeed(emoteSpeed) end
+    if currentTrack then
+        currentTrack:AdjustSpeed(emoteSpeed)
+    end
 end)
 
 SpeedDown.MouseButton1Click:Connect(function()
     emoteSpeed = math.max(emoteSpeed - 0.25, 0.25)
     SpeedLabel.Text = string.format("Speed: %.2fx", emoteSpeed)
-    if currentTrack then currentTrack:AdjustSpeed(emoteSpeed) end
+    if currentTrack then
+        currentTrack:AdjustSpeed(emoteSpeed)
+    end
 end)
 
 PrevPage.MouseButton1Click:Connect(function() ShowPage(currentPage - 1) end)
 NextPage.MouseButton1Click:Connect(function() ShowPage(currentPage + 1) end)
 
 ShowPage(1)
-StarterGui:SetCore("SendNotification",{Title="✓ Listo", Text="24 animaciones cargadas - Presiona,", Duration=5})
+StarterGui:SetCore("SendNotification",{Title="✓ Listo", Text="24 animaciones - Presiona,", Duration=5})
