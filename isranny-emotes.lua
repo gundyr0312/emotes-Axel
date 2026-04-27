@@ -1,4 +1,4 @@
---- Keybind: "," - Emotes & Animations v4 (FULL PACKAGES)
+--- Keybind: "," - Emotes & Animations v4 (FULL PACKAGES - CORREGIDO)
 local env=getgenv()
 if env.LastExecuted and tick()-env.LastExecuted<30 then return end
 env.LastExecuted=tick()
@@ -20,11 +20,7 @@ local currentMode = "Emotes"
 local emoteSpeed = 1
 local canWalk = false
 local currentTrack = nil
-
--- Para animaciones completas
-env.AnimConnection = nil
-env.IdleConnection = nil
-env.CurrentAnimTracks = {}
+local originalAnimateData = {} -- Guardar animaciones originales
 
 local ELECTRIC_BLUE = Color3.fromRGB(0, 200, 255)
 
@@ -251,149 +247,380 @@ end, true, 2001, Enum.KeyCode.Comma)
 local LocalPlayer = Players.LocalPlayer
 
 -- ============================================
--- PEGA TUS EMOTES AQUÍ
+-- EMOTES NORMALES
 -- ============================================
 local Emotes = {
     { name = "Salute", id = 3360689775, icon = "rbxthumb://type=Asset&id=3360689775&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
 }
--- ============================================
 
 -- ============================================
--- 51 ANIMACIONES COMPLETAS
+-- ANIMACIONES COMPLETAS CON IDs REALES
+-- Basado en el segundo código que me mostraste
 -- ============================================
 local Animations = {
-    { name = "Zombie", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Ninja", id = 656118852, icon = "rbxthumb://type=Asset&id=656118852&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Toy", id = 782841498, icon = "rbxthumb://type=Asset&id=782841498&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Robot", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Levitation", id = 616157476, icon = "rbxthumb://type=Asset&id=616157476&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Cartoony", id = 616156119, icon = "rbxthumb://type=Asset&id=616156119&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Superhero", id = 616163682, icon = "rbxthumb://type=Asset&id=616163682&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Stylish", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Knight", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Mage", id = 616157476, icon = "rbxthumb://type=Asset&id=616157476&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Pirate", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Elder", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Vampire", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Werewolf", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Astronaut", id = 616157476, icon = "rbxthumb://type=Asset&id=616157476&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Bubbly", id = 616156119, icon = "rbxthumb://type=Asset&id=616156119&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Rthro", id = 2510196951, icon = "rbxthumb://type=Asset&id=2510196951&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Oldschool", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Bold", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Patrol", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Sneak", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Confident", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Adidas Sports", id = 616163682, icon = "rbxthumb://type=Asset&id=616163682&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "NFL", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Catwalk Glam", id = 616156119, icon = "rbxthumb://type=Asset&id=616156119&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Astronaut", ids = {
+        idle = 891621366,
+        idle2 = 891633237,
+        walk = 891667138,
+        run = 891636393,
+        jump = 891627522,
+        climb = 891609353,
+        fall = 891617961
+    }},
+    { name = "Bubbly", ids = {
+        idle = 910004836,
+        idle2 = 910009958,
+        walk = 910034870,
+        run = 910025107,
+        jump = 910016857,
+        fall = 910001910,
+        swimidle = 910030921,
+        swim = 910028158
+    }},
+    { name = "Cartoony", ids = {
+        idle = 742637544,
+        idle2 = 742638445,
+        walk = 742640026,
+        run = 742638842,
+        jump = 742637942,
+        climb = 742636889,
+        fall = 742637151
+    }},
+    { name = "Elder", ids = {
+        idle = 845397899,
+        idle2 = 845400520,
+        walk = 845403856,
+        run = 845386501,
+        jump = 845398858,
+        climb = 845392038,
+        fall = 845396048
+    }},
+    { name = "Knight", ids = {
+        idle = 657595757,
+        idle2 = 657568135,
+        walk = 657552124,
+        run = 657564596,
+        jump = 658409194,
+        climb = 658360781,
+        fall = 657600338
+    }},
+    { name = "Levitation", ids = {
+        idle = 616006778,
+        idle2 = 616008087,
+        walk = 616013216,
+        run = 616010382,
+        jump = 616008936,
+        climb = 616003713,
+        fall = 616005863
+    }},
+    { name = "Mage", ids = {
+        idle = 707742142,
+        idle2 = 707855907,
+        walk = 707897309,
+        run = 707861613,
+        jump = 707853694,
+        climb = 707826056,
+        fall = 707829716
+    }},
+    { name = "Ninja", ids = {
+        idle = 656117400,
+        idle2 = 656118341,
+        walk = 656121766,
+        run = 656118852,
+        jump = 656117878,
+        climb = 656114359,
+        fall = 656115606
+    }},
+    { name = "Pirate", ids = {
+        idle = 750781874,
+        idle2 = 750782770,
+        walk = 750785693,
+        run = 750783738,
+        jump = 750782230,
+        climb = 750779899,
+        fall = 750780242
+    }},
+    { name = "Robot", ids = {
+        idle = 616088211,
+        idle2 = 616089559,
+        walk = 616095330,
+        run = 616091570,
+        jump = 616090535,
+        climb = 616086039,
+        fall = 616087089
+    }},
+    { name = "Stylish", ids = {
+        idle = 616136790,
+        idle2 = 616138447,
+        walk = 616146177,
+        run = 616140816,
+        jump = 616139451,
+        climb = 616133594,
+        fall = 616134815
+    }},
+    { name = "SuperHero", ids = {
+        idle = 616111295,
+        idle2 = 616113536,
+        walk = 616122287,
+        run = 616117076,
+        jump = 616115533,
+        climb = 616104706,
+        fall = 616108001
+    }},
+    { name = "Toy", ids = {
+        idle = 782841498,
+        idle2 = 782845736,
+        walk = 782843345,
+        run = 782842708,
+        jump = 782847020,
+        climb = 782843869,
+        fall = 782846423
+    }},
+    { name = "Vampire", ids = {
+        idle = 1083445855,
+        idle2 = 1083450166,
+        walk = 1083473930,
+        run = 1083462077,
+        jump = 1083455352,
+        climb = 1083439238,
+        fall = 1083443587
+    }},
+    { name = "Werewolf", ids = {
+        idle = 1083195517,
+        idle2 = 1083214717,
+        walk = 1083178339,
+        run = 1083216690,
+        jump = 1083218792,
+        climb = 1083182000,
+        fall = 1083189019
+    }},
+    { name = "Zombie", ids = {
+        idle = 616158929,
+        idle2 = 616160636,
+        walk = 616168032,
+        run = 616163682,
+        jump = 616161997,
+        climb = 616156119,
+        fall = 616157476
+    }},
+    { name = "Patrol", ids = {
+        idle = 1149612882,
+        idle2 = 1150842221,
+        walk = 1151231493,
+        run = 1150967949,
+        jump = 1148811837,
+        climb = 1148811837,
+        fall = 1148863382
+    }},
+    { name = "Confident", ids = {
+        idle = 1069977950,
+        idle2 = 1069987858,
+        walk = 1070017263,
+        run = 1070001516,
+        jump = 1069984524,
+        climb = 1069946257,
+        fall = 1069973677
+    }},
+    { name = "Popstar", ids = {
+        idle = 1212900985,
+        idle2 = 1150842221,
+        walk = 1212980338,
+        run = 1212980348,
+        jump = 1212954642,
+        climb = 1213044953,
+        fall = 1212900995
+    }},
+    { name = "Cowboy", ids = {
+        idle = 1014390418,
+        idle2 = 1014398616,
+        walk = 1014421541,
+        run = 1014401683,
+        jump = 1014394726,
+        climb = 1014380606,
+        fall = 1014384571
+    }},
+    { name = "Ghost", ids = {
+        idle = 616006778,
+        idle2 = 616008087,
+        walk = 616013216,
+        run = 616013216,
+        jump = 616008936,
+        fall = 616005863,
+        swimidle = 616012453,
+        swim = 616011509
+    }},
+    { name = "Sneaky", ids = {
+        idle = 1132473842,
+        idle2 = 1132477671,
+        walk = 1132510133,
+        run = 1132494274,
+        jump = 1132489853,
+        climb = 1132461372,
+        fall = 1132469004
+    }},
+    { name = "Princess", ids = {
+        idle = 941003647,
+        idle2 = 941013098,
+        walk = 941028902,
+        run = 941015281,
+        jump = 941008832,
+        climb = 940996062,
+        fall = 941000007
+    }},
+    { name = "Anthro", ids = {
+        idle = 2510196951,
+        idle2 = 2510197257,
+        walk = 2510202577,
+        run = 2510198475,
+        jump = 2510197830,
+        climb = 2510192778,
+        fall = 2510195892
+    }},
 }
--- ============================================
 
-for _,list in pairs({Emotes, Animations}) do
-    table.sort(list, function(a,b) return a.name < b.name end)
-    for i,v in ipairs(list) do v.sort.alphabeticfirst = i end
+-- Función para guardar animaciones originales
+local function SaveOriginalAnimations(animate)
+    if not originalAnimateData.saved then
+        originalAnimateData = {
+            saved = true,
+            idle1 = animate.idle.Animation1.AnimationId,
+            idle2 = animate.idle.Animation2.AnimationId,
+            walk = animate.walk.WalkAnim.AnimationId,
+            run = animate.run.RunAnim.AnimationId,
+            jump = animate.jump.JumpAnim.AnimationId,
+            climb = animate.climb.ClimbAnim.AnimationId,
+            fall = animate.fall.FallAnim.AnimationId,
+        }
+        if animate.swim then
+            originalAnimateData.swimidle = animate.swimidle.SwimIdle.AnimationId
+            originalAnimateData.swim = animate.swim.Swim.AnimationId
+        end
+    end
 end
 
-local function PlayAnimation(name, id)
+-- Función para restaurar animaciones originales
+local function RestoreOriginalAnimations(animate)
+    if originalAnimateData.saved then
+        animate.idle.Animation1.AnimationId = originalAnimateData.idle1
+        animate.idle.Animation2.AnimationId = originalAnimateData.idle2
+        animate.walk.WalkAnim.AnimationId = originalAnimateData.walk
+        animate.run.RunAnim.AnimationId = originalAnimateData.run
+        animate.jump.JumpAnim.AnimationId = originalAnimateData.jump
+        animate.climb.ClimbAnim.AnimationId = originalAnimateData.climb
+        animate.fall.FallAnim.AnimationId = originalAnimateData.fall
+        if animate.swim and originalAnimateData.swim then
+            animate.swimidle.SwimIdle.AnimationId = originalAnimateData.swimidle
+            animate.swim.Swim.AnimationId = originalAnimateData.swim
+        end
+    end
+end
+
+-- Función para aplicar animación completa
+local function ApplyFullAnimation(animData)
     local char = LocalPlayer.Character
     if not char then return end
+    
+    local animate = char:FindFirstChild("Animate")
+    if not animate then
+        -- Si no existe el script Animate, crearlo
+        animate = Instance.new("LocalScript")
+        animate.Name = "Animate"
+        animate.Disabled = true
+        animate.Parent = char
+        
+        -- Crear la estructura básica
+        local tracks = {"idle", "walk", "run", "jump", "climb", "fall"}
+        for _, track in pairs(tracks) do
+            local folder = Instance.new("Folder")
+            folder.Name = track
+            folder.Parent = animate
+            local anim = Instance.new("Animation")
+            anim.Name = track == "idle" and "Animation1" or (track == "walk" and "WalkAnim" or (track == "run" and "RunAnim" or (track == "jump" and "JumpAnim" or (track == "climb" and "ClimbAnim" or "FallAnim"))))
+            anim.Parent = folder
+        end
+        
+        -- Para idle necesita Animation2 también
+        local idleFolder = animate.idle
+        local anim2 = Instance.new("Animation")
+        anim2.Name = "Animation2"
+        anim2.Parent = idleFolder
+        
+        animate.Disabled = false
+    end
+    
+    -- Guardar originales si no se han guardado
+    SaveOriginalAnimations(animate)
+    
+    -- Aplicar nuevas animaciones
+    if animData.ids.idle then
+        animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.idle
+    end
+    if animData.ids.idle2 then
+        animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.idle2
+    end
+    if animData.ids.walk then
+        animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.walk
+    end
+    if animData.ids.run then
+        animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.run
+    end
+    if animData.ids.jump then
+        animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.jump
+    end
+    if animData.ids.climb then
+        animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.climb
+    end
+    if animData.ids.fall then
+        animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.fall
+    end
+    if animData.ids.swimidle and animate.swimidle then
+        animate.swimidle.SwimIdle.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.swimidle
+    end
+    if animData.ids.swim and animate.swim then
+        animate.swim.Swim.AnimationId = "http://www.roblox.com/asset/?id=" .. animData.ids.swim
+    end
+    
+    -- Forzar actualización del personaje
     local hum = char:FindFirstChildOfClass("Humanoid")
-    if not hum then return end
-
-    -- Limpiar animaciones anteriores
-    if currentTrack then currentTrack:Stop() end
-    if env.AnimConnection then env.AnimConnection:Disconnect() end
-    if env.IdleConnection then env.IdleConnection:Disconnect() end
-    for _, track in pairs(env.CurrentAnimTracks) do
-        if track then track:Stop() end
+    if hum then
+        hum.Jump = true
     end
-    env.CurrentAnimTracks = {}
-    for _, track in pairs(hum:GetPlayingAnimationTracks()) do
-        track:Stop()
-    end
-
-    -- Crear sistema de animaciones
-    local animObj = Instance.new("Animation")
-    animObj.AnimationId = "rbxassetid://"..id
-
-    local tracks = {}
-    local currentState = "idle"
-
-    local function getTrack()
-        if not tracks[currentState] then
-            tracks[currentState] = hum:LoadAnimation(animObj)
-            tracks[currentState].Priority = Enum.AnimationPriority.Movement
-            tracks[currentState].Looped = true
-            table.insert(env.CurrentAnimTracks, tracks[currentState])
-        end
-        return tracks[currentState]
-    end
-
-    local function playState(state)
-        if currentState ~= state and tracks[currentState] then
-            tracks[currentState]:Stop(0.2)
-        end
-        currentState = state
-        local track = getTrack()
-        if not track.IsPlaying then
-            track:Play(0.2, 1, emoteSpeed)
-        else
-            track:AdjustSpeed(emoteSpeed)
-        end
-    end
-
-    -- Conectar eventos
-    env.AnimConnection = hum.Running:Connect(function(speed)
-        if speed > 0.1 then
-            playState("walk")
-        else
-            playState("idle")
-        end
-    end)
-
-    env.IdleConnection = hum.StateChanged:Connect(function(_, new)
-        if new == Enum.HumanoidStateType.Jumping or new == Enum.HumanoidStateType.Freefall then
-            playState("jump")
-        end
-    end)
-
-    -- Iniciar
-    playState("idle")
-
+    
     BackFrame.Visible = false
     Open.Text = "Open"
-    StarterGui:SetCore("SendNotification", {Title = "✓ "..name, Text = "Camina y salta para probar", Duration = 3})
+    StarterGui:SetCore("SendNotification", {Title = "✓ "..animData.name, Text = "Animación de locomoción aplicada", Duration = 3})
 end
 
+-- Función para emote normal (se mantiene igual pero corregida)
 local function PlayEmote(name, id)
     local char = LocalPlayer.Character
     if not char then return end
     local hum = char:FindFirstChildOfClass("Humanoid")
     if not hum then return end
-    local desc = hum:FindFirstChildOfClass("HumanoidDescription")
-    if not desc then desc = Instance.new("HumanoidDescription", hum) end
-
-    if currentTrack then currentTrack:Stop() end
-    if env.AnimConnection then env.AnimConnection:Disconnect() end
-    if env.IdleConnection then env.IdleConnection:Disconnect() end
-
-    if hum.RigType ~= Enum.HumanoidRigType.R6 then
-        local success, track = pcall(function() return hum:PlayEmoteAndGetAnimTrackById(id) end)
-        if not success then
-            pcall(function() desc:AddEmote(name, id) end)
-            success, track = pcall(function() return hum:PlayEmoteAndGetAnimTrackById(id) end)
-        end
-        if success and track then
-            currentTrack = track
-            track:AdjustSpeed(emoteSpeed)
-            if canWalk then track.Priority = Enum.AnimationPriority.Action end
-        end
+    
+    -- Limpiar cualquier animación de locomoción previa (restaurar originales)
+    local animate = char:FindFirstChild("Animate")
+    if animate and originalAnimateData.saved then
+        RestoreOriginalAnimations(animate)
     end
+    
+    if currentTrack then currentTrack:Stop() end
+    
+    local success, track = pcall(function() return hum:PlayEmoteAndGetAnimTrackById(id) end)
+    if success and track then
+        currentTrack = track
+        track:AdjustSpeed(emoteSpeed)
+        if canWalk then track.Priority = Enum.AnimationPriority.Action end
+        StarterGui:SetCore("SendNotification", {Title = "✓ "..name, Text = "Emote reproducido", Duration = 2})
+    else
+        StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No se pudo reproducir: "..name, Duration = 2})
+    end
+    
     BackFrame.Visible = false
     Open.Text = "Open"
 end
 
+-- Mostrar página (adaptado para las nuevas animaciones)
 local function ShowPage(page)
     for _,v in pairs(Frame:GetChildren()) do if not v:IsA("UIGridLayout") then v:Destroy() end end
     local list = currentMode == "Emotes" and Emotes or Animations
@@ -403,13 +630,15 @@ local function ShowPage(page)
     PageLabel.Text = page.."/"..totalPages
     PrevPage.Visible = page > 1
     NextPage.Visible = page < totalPages
+    
     for i = startIdx, endIdx do
         local item = list[i]
         if item then
             local btn = Instance.new("ImageButton")
-            btn.Name = tostring(item.id)
+            btn.Name = currentMode == "Emotes" and tostring(item.id) or item.name
             btn:SetAttribute("name", item.name)
-            btn.Image = item.icon
+            -- Usar icono genérico si no hay específico
+            btn.Image = item.icon or "rbxasset://textures/ui/GuiImagePlaceholder.png"
             btn.BackgroundTransparency = 0.5
             btn.BackgroundColor3 = Color3.new(0,0,0)
             btn.LayoutOrder = i
@@ -420,15 +649,29 @@ local function ShowPage(page)
             btnStroke.Color = ELECTRIC_BLUE
             btnStroke.Thickness = 1.5
             btnStroke.Transparency = 0.6
+            
             btn.MouseButton1Click:Connect(function()
-                if currentMode == "Emotes" then PlayEmote(item.name, item.id) else PlayAnimation(item.name, item.id) end
+                if currentMode == "Emotes" then
+                    PlayEmote(item.name, item.id)
+                else
+                    ApplyFullAnimation(item)
+                end
             end)
-            btn.MouseEnter:Connect(function() EmoteName.Text = item.name btnStroke.Transparency = 0 btnStroke.Thickness = 2.5 end)
-            btn.MouseLeave:Connect(function() btnStroke.Transparency = 0.6 btnStroke.Thickness = 1.5 end)
+            
+            btn.MouseEnter:Connect(function() 
+                EmoteName.Text = item.name 
+                btnStroke.Transparency = 0 
+                btnStroke.Thickness = 2.5 
+            end)
+            btn.MouseLeave:Connect(function() 
+                btnStroke.Transparency = 0.6 
+                btnStroke.Thickness = 1.5 
+            end)
         end
     end
 end
 
+-- Configurar botones
 ModeButton.MouseButton1Click:Connect(function()
     currentMode = currentMode == "Emotes" and "Animations" or "Emotes"
     ModeButton.Text = currentMode:upper()
@@ -441,15 +684,47 @@ WalkButton.MouseButton1Click:Connect(function()
     canWalk = not canWalk
     WalkButton.Text = "Walk: ".. (canWalk and "ON" or "OFF")
     WalkButton.BackgroundColor3 = canWalk and Color3.fromRGB(0,100,0) or Color3.fromRGB(100,0,0)
-    if currentTrack then currentTrack.Priority = canWalk and Enum.AnimationPriority.Action or Enum.AnimationPriority.Movement end
+    if currentTrack then 
+        currentTrack.Priority = canWalk and Enum.AnimationPriority.Action or Enum.AnimationPriority.Movement 
+    end
 end)
 
-SpeedUp.MouseButton1Click:Connect(function() emoteSpeed = math.min(emoteSpeed + 0.25, 3) SpeedLabel.Text = "Speed: "..emoteSpeed.."x" if currentTrack then currentTrack:AdjustSpeed(emoteSpeed) end for _,t in pairs(env.CurrentAnimTracks) do if t then t:AdjustSpeed(emoteSpeed) end end end)
-SpeedDown.MouseButton1Click:Connect(function() emoteSpeed = math.max(emoteSpeed - 0.25, 0.25) SpeedLabel.Text = "Speed: "..emoteSpeed.."x" if currentTrack then currentTrack:AdjustSpeed(emoteSpeed) end for _,t in pairs(env.CurrentAnimTracks) do if t then t:AdjustSpeed(emoteSpeed) end end end)
-PrevPage.MouseButton1Click:Connect(function() if currentPage > 1 then currentPage -= 1 ShowPage(currentPage) end end)
-NextPage.MouseButton1Click:Connect(function() local total = math.ceil((currentMode == "Emotes" and #Emotes or #Animations) / EMOTES_PER_PAGE) if currentPage < total then currentPage += 1 ShowPage(currentPage) end end)
+SpeedUp.MouseButton1Click:Connect(function() 
+    emoteSpeed = math.min(emoteSpeed + 0.25, 3) 
+    SpeedLabel.Text = "Speed: "..emoteSpeed.."x" 
+    if currentTrack then currentTrack:AdjustSpeed(emoteSpeed) end 
+end)
 
-LocalPlayer.CharacterAdded:Connect(function() task.wait(1) ShowPage(1) end)
-if LocalPlayer.Character then ShowPage(1) end
+SpeedDown.MouseButton1Click:Connect(function() 
+    emoteSpeed = math.max(emoteSpeed - 0.25, 0.25) 
+    SpeedLabel.Text = "Speed: "..emoteSpeed.."x" 
+    if currentTrack then currentTrack:AdjustSpeed(emoteSpeed) end 
+end)
 
-StarterGui:SetCore("SendNotification",{Title = "Ready!", Text = "Press, to open - 25 anims loaded", Duration = 5})
+PrevPage.MouseButton1Click:Connect(function() 
+    if currentPage > 1 then 
+        currentPage = currentPage - 1 
+        ShowPage(currentPage) 
+    end 
+end)
+
+NextPage.MouseButton1Click:Connect(function() 
+    local total = math.ceil((currentMode == "Emotes" and #Emotes or #Animations) / EMOTES_PER_PAGE) 
+    if currentPage < total then 
+        currentPage = currentPage + 1 
+        ShowPage(currentPage) 
+    end 
+end)
+
+-- Cuando el personaje se respawnea, restaurar página
+LocalPlayer.CharacterAdded:Connect(function() 
+    task.wait(1) 
+    currentPage = 1
+    ShowPage(1) 
+end)
+
+if LocalPlayer.Character then 
+    ShowPage(1) 
+end
+
+StarterGui:SetCore("SendNotification",{Title = "Ready!", Text = "Press , to open - "..#Animations.." anims loaded", Duration = 5})
