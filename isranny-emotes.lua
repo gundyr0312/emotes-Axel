@@ -1535,7 +1535,6 @@ addEmote("Aura Farm Boat", 88042995626011, 39, "Aug 09, 2025")
 addEmote("Prince Of Egypt", 134063402217274, 39, "Aug 08, 2025")
 addEmote("Jersey Joe2", 115782117564871, 39, "Aug 09, 2025")
 addEmote("Deltarune - Tenna Dance", 73715378215546, 39, "Aug 08, 2025")
-
 addEmote("California Girl", 132074413582912, 39, "Aug 08, 2025")
 addEmote("Default Dance", 80877772569772, 39, "Aug 08, 2025")
 addEmote("Shocked meme", 129501229484294, 39, "Aug 08, 2025")
