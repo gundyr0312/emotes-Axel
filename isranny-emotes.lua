@@ -1,4 +1,4 @@
---- Keybind: "," - Emotes & Animations v4 (FULL PACKAGES - CON REMOTEEVENT)
+--- Keybind: "," - Emotes & Animations v4 (FULL PACKAGES - CON REMOTEEVENT Y SLOTS)
 local env = getgenv()
 if env.LastExecuted and tick() - env.LastExecuted < 30 then
     return
@@ -40,13 +40,15 @@ local currentTrack = nil
 
 local ELECTRIC_BLUE = Color3.fromRGB(0, 200, 255)
 
--- Iconos/Emojis para animaciones
+-- Iconos/Emojis para animaciones (paquetes)
 local AnimationIcons = {
-    Astronaut = "🚀", Bubbly = "🫧", Cartoony = "🎨", Elder = "👴", Knight = "⚔️",
-    Levitation = "🌀", Mage = "🔮", Ninja = "🥷", Pirate = "🏴‍☠️", Robot = "🤖",
-    Stylish = "😎", SuperHero = "🦸", Toy = "🧸", Vampire = "🧛", Werewolf = "🐺",
-    Zombie = "🧟", Patrol = "👮", Confident = "😏", Popstar = "⭐", Cowboy = "🤠",
-    Ghost = "👻", Sneaky = "🥷", Princess = "👸", Anthro = "🐺"
+    AdidasCommunity = "👟", AdidasAura = "✨", Oldschool = "🕹️", WickedPopular = "🧙",
+    Stylish = "😎", Robot = "🤖", AdidasSports = "⚽", Toy = "🧸", CatwalkGlam = "💃",
+    Zombie = "🧟", Mage = "🔮", Rthro = "🦾", Unboxed = "📦", Bold = "💪",
+    Cartoony = "🎨", Bubbly = "🫧", Elder = "👴", Vampire = "🧛", Ninja = "🥷",
+    NoBoundaries = "🏃", WickedDancing = "💃", Superhero = "🦸", Levitation = "🌀",
+    NFL = "🏈", Werewolf = "🐺", Knight = "⚔️", Astronaut = "🚀", Pirate = "🏴‍☠️",
+    GlowMotion = "✨", Katseye = "⭐"
 }
 
 local ScreenGui = Instance.new("ScreenGui")
@@ -280,64 +282,55 @@ local Emotes = {
 }
 
 -- ============================================
--- ANIMACIONES COMPLETAS CON SUS IDs
+-- ANIMACIONES (PAQUETES CON SLOTS 1-7)
+-- Basado en la lista que me diste
 -- ============================================
 local Animations = {
-    { name = "Astronaut", walk = 891667138, run = 891636393, idle = 891621366, jump = 891627522, climb = 891609353, fall = 891617961, idle2 = 891633237 },
-    { name = "Bubbly", walk = 910034870, run = 910025107, idle = 910004836, jump = 910016857, fall = 910001910, climb = "", idle2 = 910009958, swimidle = 910030921, swim = 910028158 },
-    { name = "Cartoony", walk = 742640026, run = 742638842, idle = 742637544, jump = 742637942, fall = 742637151, climb = 742636889, idle2 = 742638445 },
-    { name = "Elder", walk = 845403856, run = 845386501, idle = 845397899, jump = 845398858, fall = 845396048, climb = 845392038, idle2 = 845400520 },
-    { name = "Knight", walk = 657552124, run = 657564596, idle = 657595757, jump = 658409194, fall = 657600338, climb = 658360781, idle2 = 657568135 },
-    { name = "Levitation", walk = 616013216, run = 616010382, idle = 616006778, jump = 616008936, fall = 616005863, climb = 616003713, idle2 = 616008087 },
-    { name = "Mage", walk = 707897309, run = 707861613, idle = 707742142, jump = 707853694, fall = 707829716, climb = 707826056, idle2 = 707855907 },
-    { name = "Ninja", walk = 656121766, run = 656118852, idle = 656117400, jump = 656117878, fall = 656115606, climb = 656114359, idle2 = 656118341 },
-    { name = "Pirate", walk = 750785693, run = 750783738, idle = 750781874, jump = 750782230, fall = 750780242, climb = 750779899, idle2 = 750782770 },
-    { name = "Robot", walk = 616095330, run = 616091570, idle = 616088211, jump = 616090535, fall = 616087089, climb = 616086039, idle2 = 616089559 },
-    { name = "Stylish", walk = 616146177, run = 616140816, idle = 616136790, jump = 616139451, fall = 616134815, climb = 616133594, idle2 = 616138447 },
-    { name = "SuperHero", walk = 616122287, run = 616117076, idle = 616111295, jump = 616115533, fall = 616108001, climb = 616104706, idle2 = 616113536 },
-    { name = "Toy", walk = 782843345, run = 782842708, idle = 782841498, jump = 782847020, fall = 782846423, climb = 782843869, idle2 = 782845736 },
-    { name = "Vampire", walk = 1083473930, run = 1083462077, idle = 1083445855, jump = 1083455352, fall = 1083443587, climb = 1083439238, idle2 = 1083450166 },
-    { name = "Werewolf", walk = 1083178339, run = 1083216690, idle = 1083195517, jump = 1083218792, fall = 1083189019, climb = 1083182000, idle2 = 1083214717 },
-    { name = "Zombie", walk = 616168032, run = 616163682, idle = 616158929, jump = 616161997, fall = 616157476, climb = 616156119, idle2 = 616160636 },
-    { name = "Patrol", walk = 1151231493, run = 1150967949, idle = 1149612882, jump = 1148811837, fall = 1148863382, climb = 1148811837, idle2 = 1150842221 },
-    { name = "Confident", walk = 1070017263, run = 1070001516, idle = 1069977950, jump = 1069984524, fall = 1069973677, climb = 1069946257, idle2 = 1069987858 },
-    { name = "Popstar", walk = 1212980338, run = 1212980348, idle = 1212900985, jump = 1212954642, fall = 1212900995, climb = 1213044953, idle2 = 1150842221 },
-    { name = "Cowboy", walk = 1014421541, run = 1014401683, idle = 1014390418, jump = 1014394726, fall = 1014384571, climb = 1014380606, idle2 = 1014398616 },
-    { name = "Ghost", walk = 616013216, run = 616013216, idle = 616006778, jump = 616008936, fall = 616005863, climb = "", idle2 = 616008087, swimidle = 616012453, swim = 616011509 },
-    { name = "Sneaky", walk = 1132510133, run = 1132494274, idle = 1132473842, jump = 1132489853, fall = 1132469004, climb = 1132461372, idle2 = 1132477671 },
-    { name = "Princess", walk = 941028902, run = 941015281, idle = 941003647, jump = 941008832, fall = 941000007, climb = 940996062, idle2 = 941013098 },
-    { name = "Anthro", walk = 2510202577, run = 2510198475, idle = 2510196951, jump = 2510197830, fall = 2510195892, climb = 2510192778, idle2 = 2510197257 },
+    { key = "AdidasCommunity", name = "Adidas Community", slots = {123695349157584, 93993406355955, 106810508343012, 106537993816942, 126354114956642, 124765145869332, 115715495289805} },
+    { key = "AdidasAura", name = "Adidas Aura", slots = {140398319728398, 99457463463495, 129527230938281, 123973978164540, 73137983344853, 119007025452432, 75183215343859} },
+    { key = "Oldschool", name = "Oldschool", slots = {5319900634, 5319909330, 5319914476, 5319917561, 5319922112, 5319927054, 5319931619} },
+    { key = "WickedPopular", name = "Wicked Popular", slots = {135810009801094, 83937116921114, 130373407996664, 101839542383818, 136276875045281, 128475661806875, 133304526526319} },
+    { key = "Stylish", name = "Stylish", slots = {619509955, 619511417, 619511648, 619511974, 619512153, 619512450, 619512767} },
+    { key = "Robot", name = "Robot", slots = {619521311, 619521521, 619521748, 619522088, 619522386, 619522642, 619522849} },
+    { key = "AdidasSports", name = "Adidas Sports", slots = {18538133604, 18538146480, 18538150608, 18538153691, 18538158932, 18538164337, 18538170170} },
+    { key = "Toy", name = "Toy", slots = {973766674, 973767371, 973768058, 973770652, 973771666, 973772659, 973773170} },
+    { key = "CatwalkGlam", name = "Catwalk Glam", slots = {104741822987331, 72706690305027, 138641066989023, 75036746190467, 101279640971758, 112231179705221, 103190462987721} },
+    { key = "Zombie", name = "Zombie", slots = {619535091, 619535616, 619535834, 619536283, 619536621, 619537096, 619537468} },
+    { key = "Mage", name = "Mage", slots = {754635032, 754636298, 754636589, 754637084, 754637456, 754638471, 754639239} },
+    { key = "Rthro", name = "Rthro", slots = {2510230574, 2510233257, 2510235063, 2510236649, 2510238627, 2510240941, 2510242378} },
+    { key = "Unboxed", name = "Unboxed", slots = {117011755848398, 125108870423182, 110418911914024, 114998633936467, 82219139681769, 137392271797713, 128339543796138} },
+    { key = "Bold", name = "Bold", slots = {16744204409, 16744207822, 16744209868, 16744212581, 16744214662, 16744217055, 16744219182} },
+    { key = "Cartoony", name = "Cartoony", slots = {837009922, 837010234, 837010685, 837011171, 837011741, 837012509, 837013990} },
+    { key = "Bubbly", name = "Bubbly", slots = {1018554245, 1018553897, 1018553240, 1018552770, 1018549681, 1018548665, 1018554668} },
+    { key = "Elder", name = "Elder", slots = {892267099, 892267521, 892267917, 892268340, 892268710, 892269341, 892265784} },
+    { key = "Vampire", name = "Vampire", slots = {1113740510, 1113741192, 1113742092, 1113742359, 1113742618, 1113742944, 1113743239} },
+    { key = "Ninja", name = "Ninja", slots = {658830056, 658831143, 658831500, 658832070, 658832408, 658832807, 658833139} },
+    { key = "NoBoundaries", name = "No Boundaries", slots = {18755919175, 18755922352, 18755930927, 18755925411, 18755933883, 18755938274, 18755942776} },
+    { key = "WickedDancing", name = "Wicked Dancing", slots = {123509187015792, 124742764102674, 79789194522561, 111157411630082, 82682578794949, 135050138303161, 94133616443608} },
+    { key = "Superhero", name = "Superhero", slots = {619527470, 619527817, 619528125, 619528412, 619528716, 619529095, 619529601} },
+    { key = "Levitation", name = "Levitation", slots = {619541458, 619541867, 619542203, 619542888, 619543231, 619543721, 619544080} },
+    { key = "NFL", name = "NFL", slots = {122757794615785, 123307994439772, 101094325978637, 140600227095432, 84823630062362, 136750772888868, 120071305586627} },
+    { key = "Werewolf", name = "Werewolf", slots = {1113750642, 1113751657, 1113751889, 1113752285, 1113752682, 1113752975, 1113754738} },
+    { key = "Knight", name = "Knight", slots = {734325948, 734326330, 734326679, 734326930, 734327140, 734327363, 734329002} },
+    { key = "Astronaut", name = "Astronaut", slots = {1090130630, 1090131576, 1090132063, 1090132507, 1090133099, 1090133583, 1090134016} },
+    { key = "Pirate", name = "Pirate", slots = {837023444, 837023892, 837024147, 837024350, 837024662, 837025054, 837025325} },
+    { key = "GlowMotion", name = "Glow Motion", slots = {122281742555667, 76868289213402, 72213510878866, 126137138096765, 91745899537026, 78813763153341, 124733969277188} },
+    { key = "Katseye", name = "KATSEYE", slots = {130399277423748, 84737112249504, 125286451593779, 121868657321572, 140179859838109, 87465102258861, 105967194765350} },
 }
 
 -- ============================================
--- ENVIAR ANIMACIÓN AL SERVIDOR (para que todos la vean)
+-- ENVIAR ANIMACIÓN AL SERVIDOR (con slots 1-7)
 -- ============================================
 local function ApplyFullAnimation(animData)
-    -- Construir el diccionario de animaciones
-    local animationIds = {}
-    
-    if animData.idle then animationIds.idle = "rbxassetid://" .. animData.idle end
-    if animData.idle2 then 
-        if not animationIds.idle then animationIds.idle = {} end
-        animationIds.idle2 = "rbxassetid://" .. animData.idle2
-    end
-    if animData.walk then animationIds.walk = "rbxassetid://" .. animData.walk end
-    if animData.run then animationIds.run = "rbxassetid://" .. animData.run end
-    if animData.jump then animationIds.jump = "rbxassetid://" .. animData.jump end
-    if animData.climb and animData.climb ~= "" then animationIds.climb = "rbxassetid://" .. animData.climb end
-    if animData.fall then animationIds.fall = "rbxassetid://" .. animData.fall end
-    if animData.swim and animData.swim ~= "" then animationIds.swim = "rbxassetid://" .. animData.swim end
-    if animData.swimidle and animData.swimidle ~= "" then animationIds.swimidle = "rbxassetid://" .. animData.swimidle end
-    
-    -- Enviar al servidor
-    ChangeAnimationEvent:FireServer(animationIds)
+    -- Enviar los slots completos al servidor
+    ChangeAnimationEvent:FireServer(animData.slots)
     
     BackFrame.Visible = false
     Open.Text = "Open"
-    StarterGui:SetCore("SendNotification", {Title = "✓ " .. animData.name, Text = "Animación aplicada (visible para todos)", Duration = 3})
+    StarterGui:SetCore("SendNotification", {Title = "✓ " .. animData.name, Text = "Paquete de animaciones aplicado", Duration = 3})
 end
 
--- Reproducir emote normal (solo local, como estaba antes)
+-- Reproducir emote normal (solo local)
 local function PlayEmote(name, id)
     local char = LocalPlayer.Character
     if not char then
@@ -463,7 +456,7 @@ local function ShowPage(page)
                 local btn = Instance.new("TextButton")
                 btn.Name = item.name
                 btn:SetAttribute("name", item.name)
-                btn.Text = AnimationIcons[item.name] or "🏃"
+                btn.Text = AnimationIcons[item.key] or "🎮"
                 btn.TextScaled = true
                 btn.TextSize = 30
                 btn.BackgroundTransparency = 0.3
@@ -577,7 +570,7 @@ end
 
 StarterGui:SetCore("SendNotification", {
     Title = "Ready!",
-    Text = "Press , to open - " .. #Animations .. " anims loaded",
+    Text = "Press , to open - " .. #Animations .. " animation packs loaded",
     Duration = 5
 })
 
@@ -588,54 +581,68 @@ task.wait(1)
 local ServerScript = Instance.new("Script")
 ServerScript.Name = "AnimationHandler"
 ServerScript.Source = [[
--- SERVER SCRIPT - Animation Handler
+-- SERVER SCRIPT - Animation Handler (CON SLOTS 1-7)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local event = ReplicatedStorage:WaitForChild("ChangeAnimation")
 
-event.OnServerEvent:Connect(function(player, animData)
+-- Mapeo de slots a tipos de animación
+local SlotTypes = {
+    [1] = "idle",
+    [2] = "walk",
+    [3] = "run",
+    [4] = "jump",
+    [5] = "climb",
+    [6] = "fall",
+    [7] = "idle2"
+}
+
+event.OnServerEvent:Connect(function(player, slots)
     local char = player.Character
     if not char then return end
     
     local animate = char:FindFirstChild("Animate")
     if not animate then return end
     
-    -- Aplicar animaciones a cada categoría
-    for category, animId in pairs(animData) do
-        local folder = animate:FindFirstChild(category)
-        if folder then
-            for _, anim in pairs(folder:GetChildren()) do
-                if anim:IsA("Animation") then
-                    anim.AnimationId = animId
+    -- Aplicar cada slot a su categoría correspondiente
+    for slot, animId in pairs(slots) do
+        local animType = SlotTypes[slot]
+        if animType and animId and animId ~= 0 then
+            if animType == "idle" or animType == "idle2" then
+                -- Para idle, asignar a Animation1 o Animation2
+                local idleFolder = animate:FindFirstChild("idle")
+                if idleFolder then
+                    local animObj = idleFolder:FindFirstChild(animType == "idle" and "Animation1" or "Animation2")
+                    if animObj and animObj:IsA("Animation") then
+                        animObj.AnimationId = "rbxassetid://" .. animId
+                    end
                 end
-            end
-        end
-    end
-    
-    -- Para el caso especial de idle (tiene Animation1 y Animation2)
-    if animData.idle then
-        local idleFolder = animate:FindFirstChild("idle")
-        if idleFolder then
-            local anim1 = idleFolder:FindFirstChild("Animation1")
-            local anim2 = idleFolder:FindFirstChild("Animation2")
-            if anim1 and anim1:IsA("Animation") then
-                anim1.AnimationId = animData.idle
-            end
-            if anim2 and animData.idle2 and anim2:IsA("Animation") then
-                anim2.AnimationId = animData.idle2
+            else
+                -- Para walk, run, jump, climb, fall
+                local folder = animate:FindFirstChild(animType)
+                if folder then
+                    for _, anim in pairs(folder:GetChildren()) do
+                        if anim:IsA("Animation") then
+                            anim.AnimationId = "rbxassetid://" .. animId
+                            break
+                        end
+                    end
+                end
             end
         end
     end
     
     -- REINICIAR ANIMATE (importante para que los cambios surtan efecto)
     animate.Disabled = true
-    task.wait()
+    task.wait(0.1)
     animate.Disabled = false
 end)
+
+print("Animation Handler con slots 1-7 cargado")
 ]]
 ServerScript.Parent = game:GetService("ServerScriptService")
 
 StarterGui:SetCore("SendNotification", {
     Title = "Completo!",
-    Text = "Sistema listo - Las animaciones se ven en todos los jugadores",
+    Text = "Sistema listo - " .. #Animations .. " paquetes de animaciones disponibles",
     Duration = 4
 })
