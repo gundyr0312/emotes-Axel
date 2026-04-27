@@ -1613,7 +1613,6 @@ addEmote("[⌛ Limited]  HEADLESS EMOTE ", 110731335896907, 0, "Jan 01, 2024")
 addEmote("Hip Bounce", 139271706064778, 0, "Jan 01, 2024")
 addEmote("ONCE HOP HOP!", 104304182344567, 0, "Jan 01, 2024")
 addEmote("Pickle Rick Dance", 84067050907557, 0, "Jan 01, 2024")
-
 addEmote("Caramelldansen", 86982022610765, 0, "Jan 01, 2024")
 addEmote("Im Talm Bout Innit", 117301403779781, 0, "Jan 01, 2024")
 addEmote("Maraschino Step", 84822284410814, 0, "Jan 01, 2024")
