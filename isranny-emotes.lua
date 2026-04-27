@@ -1,157 +1,307 @@
+-- EMOTE PANEL V1 - Replica Exacta
 local Players = game:GetService("Players")
-local UIS = game:GetService("UserInputService")
 local player = Players.LocalPlayer
+local mouse = player:GetMouse()
 
--- Persistencia total (No se borra al morir)
-if player:WaitForChild("PlayerGui"):FindFirstChild("SB_Emotes_Final") then
-    player.PlayerGui.SB_Emotes_Final:Destroy()
-end
+-- GUI PRINCIPAL
+local EmoteGui = Instance.new("ScreenGui")
+EmoteGui.Name = "EmotePanel"
+EmoteGui.ResetOnSpawn = false
+EmoteGui.Parent = player:WaitForChild("PlayerGui")
 
-local gui = Instance.new("ScreenGui")
-gui.Name = "SB_Emotes_Final"
-gui.ResetOnSpawn = false
-gui.Parent = player:WaitForChild("PlayerGui")
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 520, 0, 420)
+MainFrame.Position = UDim2.new(0.5, -260, 0.5, -210)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.BackgroundTransparency = 0.15
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = EmoteGui
 
--- // BURBUJA "E" (Trigger idéntico a la foto)
-local bubble = Instance.new("TextButton", gui)
-bubble.Name = "Trigger"
-bubble.Size = UDim2.new(0, 45, 0, 45)
-bubble.Position = UDim2.new(0, 20, 0.1, 0)
-bubble.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
-bubble.Text = "E"
-bubble.TextColor3 = Color3.fromRGB(255, 255, 255)
-bubble.Font = Enum.Font.GothamBold
-bubble.TextSize = 25
-bubble.ZIndex = 100
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 4)
 
-local bCorner = Instance.new("UICorner", bubble)
-bCorner.CornerRadius = UDim.new(1, 0)
+-- TOP BAR
+local TopBar = Instance.new("Frame")
+TopBar.Size = UDim2.new(1, 0, 0, 32)
+TopBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+TopBar.BorderSizePixel = 0
+TopBar.Parent = MainFrame
 
-local bStroke = Instance.new("UIStroke", bubble)
-bStroke.Color = Color3.fromRGB(255, 255, 255)
-bStroke.Thickness = 1.5
+local KillBtn = Instance.new("TextButton")
+KillBtn.Size = UDim2.new(0, 65, 1, 0)
+KillBtn.Position = UDim2.new(0, 0, 0, 0)
+KillBtn.BackgroundTransparency = 1
+KillBtn.Text = "Kill Gui"
+KillBtn.TextColor3 = Color3.fromRGB(255, 60, 60)
+KillBtn.Font = Enum.Font.GothamBold
+KillBtn.TextSize = 14
+KillBtn.Parent = TopBar
 
--- // PANEL PRINCIPAL (Diseño exacto de la segunda foto)
-local main = Instance.new("Frame", gui)
-main.Name = "MainFrame"
-main.Size = UDim2.new(0, 255, 0, 350)
-main.Position = UDim2.new(0.5, -127, 0.5, -175)
-main.BackgroundColor3 = Color3.fromRGB(25, 26, 28) -- Gris fondo
-main.BorderSizePixel = 0
-main.Visible = false
-main.Active = true
+local StopBtn = Instance.new("TextButton")
+StopBtn.Size = UDim2.new(0, 55, 1, 0)
+StopBtn.Position = UDim2.new(0, 65, 0, 0)
+StopBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+StopBtn.BorderSizePixel = 0
+StopBtn.Text = "Stop"
+StopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+StopBtn.Font = Enum.Font.Gotham
+StopBtn.TextSize = 14
+StopBtn.Parent = TopBar
 
-local mCorner = Instance.new("UICorner", main)
-mCorner.CornerRadius = UDim.new(0, 8)
+local SearchBox = Instance.new("TextBox")
+SearchBox.Size = UDim2.new(0, 300, 1, -6)
+SearchBox.Position = UDim2.new(0, 125, 0, 3)
+SearchBox.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+SearchBox.BorderSizePixel = 0
+SearchBox.PlaceholderText = "Search"
+SearchBox.Text = ""
+SearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+SearchBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
+SearchBox.Font = Enum.Font.Gotham
+SearchBox.TextSize = 14
+SearchBox.ClearTextOnFocus = false
+SearchBox.Parent = TopBar
+Instance.new("UICorner", SearchBox).CornerRadius = UDim.new(0, 3)
 
--- Encabezado Gris
-local header = Instance.new("Frame", main)
-header.Size = UDim2.new(1, 0, 0, 40)
-header.BackgroundColor3 = Color3.fromRGB(52, 54, 58) -- Color barra superior
-header.BorderSizePixel = 0
+local SortBtn = Instance.new("TextButton")
+SortBtn.Size = UDim2.new(0, 60, 1, -6)
+SortBtn.Position = UDim2.new(1, -65, 0, 3)
+SortBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+SortBtn.BorderSizePixel = 0
+SortBtn.Text = "Sort"
+SortBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SortBtn.Font = Enum.Font.Gotham
+SortBtn.TextSize = 14
+SortBtn.Parent = TopBar
+Instance.new("UICorner", SortBtn).CornerRadius = UDim.new(0, 3)
 
-local hCorner = Instance.new("UICorner", header)
-hCorner.CornerRadius = UDim.new(0, 8)
+-- CONTENEDOR DE EMOTES
+local EmoteContainer = Instance.new("ScrollingFrame")
+EmoteContainer.Size = UDim2.new(1, -10, 1, -42)
+EmoteContainer.Position = UDim2.new(0, 5, 0, 37)
+EmoteContainer.BackgroundTransparency = 1
+EmoteContainer.BorderSizePixel = 0
+EmoteContainer.ScrollBarThickness = 4
+EmoteContainer.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
+EmoteContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
+EmoteContainer.Parent = MainFrame
 
-local title = Instance.new("TextLabel", header)
-title.Size = UDim2.new(1, 0, 1, 0)
-title.BackgroundTransparency = 1
-title.Text = "System Broken | Emotes"
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 16
+local Grid = Instance.new("UIGridLayout")
+Grid.CellSize = UDim2.new(0, 78, 0, 78)
+Grid.CellPadding = UDim2.new(0, 6, 0, 6)
+Grid.SortOrder = Enum.SortOrder.LayoutOrder
+Grid.Parent = EmoteContainer
 
--- Contenedor de Emotes (Área interna negra)
-local container = Instance.new("Frame", main)
-container.Size = UDim2.new(1, -16, 1, -95)
-container.Position = UDim2.new(0, 8, 0, 48)
-container.BackgroundColor3 = Color3.fromRGB(15, 16, 18)
-container.BorderSizePixel = 0
-
-local cCorner = Instance.new("UICorner", container)
-cCorner.CornerRadius = UDim.new(0, 6)
-
-local scroll = Instance.new("ScrollingFrame", container)
-scroll.Size = UDim2.new(1, -4, 1, -10)
-scroll.Position = UDim2.new(0, 2, 0, 5)
-scroll.BackgroundTransparency = 1
-scroll.BorderSizePixel = 0
-scroll.ScrollBarThickness = 3
-scroll.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
-scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-
-local layout = Instance.new("UIListLayout", scroll)
-layout.Padding = UDim.new(0, 5)
-layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-
--- Botón Cyan "Free emotes" (Ubicación exacta)
-local freeBtn = Instance.new("TextButton", main)
-freeBtn.Size = UDim2.new(0, 105, 0, 28)
-freeBtn.Position = UDim2.new(1, -115, 1, -40)
-freeBtn.BackgroundColor3 = Color3.fromRGB(80, 215, 240) -- Cyan exacto de la captura
-freeBtn.Text = "Free emotes"
-freeBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
-freeBtn.Font = Enum.Font.GothamBold
-freeBtn.TextSize = 13
-
-local fCorner = Instance.new("UICorner", freeBtn)
-fCorner.CornerRadius = UDim.new(0, 4)
-
--- // LISTA DE EMOTES (Nombres exactos de la foto)
-local visualEmotes = {
-    "Orange Justice", "Billy Bounce", "Electro Shuffle", "Hype", "Default Dance",
-    "Dab", "Best Mates", "Reaf Mane", "Just Mane", "Dab Linde", "Best Wads",
-    "Show Lock", "Harat Gant", "Uly Range"
+-- LISTA DE EMOTES (60 ejemplos - 2 páginas)
+local Emotes = {
+    {name = "Wave", id = 507770239},
+    {name = "Point", id = 507770453},
+    {name = "Dance1", id = 507771019},
+    {name = "Dance2", id = 507771955},
+    {name = "Dance3", id = 507772104},
+    {name = "Laugh", id = 507770818},
+    {name = "Cheer", id = 507770677},
+    {name = "Agree", id = 507770392},
+    {name = "Disagree", id = 507770713},
+    {name = "Sleep", id = 507777826},
+    {name = "Facepalm", id = 507770768},
+    {name = "Strong", id = 4841406616},
+    {name = "Parker", id = 782841498},
+    {name = "Stylish", id = 4719617025},
+    {name = "Tilt", id = 4686926665},
+    {name = "Worm", id = 301961592},
+    {name = "Penguin", id = 4574115042},
+    {name = "Monkey", id = 3333499508},
+    {name = "Zombie", id = 4212455378},
+    {name = "Ninja", id = 656118852},
+    {name = "Hero", id = 538058422},
+    {name = "Robot", id = 507771699},
+    {name = "Shrug", id = 507770405},
+    {name = "Bow", id = 5121890188},
+    {name = "Salute", id = 5121865535},
+    {name = "Hype", id = 5121885290},
+    {name = "Floss", id = 5937560566},
+    {name = "Griddy", id = 3360689775},
+    {name = "Stadium", id = 3360692915},
+    {name = "Jacks", id = 5474732645},
+    -- PÁGINA 2
+    {name = "Headless", id = 35154961},
+    {name = "Toy", id = 2510238627},
+    {name = "Confused", id = 4842107428},
+    {name = "Thinker", id = 5121869155},
+    {name = "Annoyed", id = 5121856893},
+    {name = "Scared", id = 5121871068},
+    {name = "Cry", id = 5121864702},
+    {name = "Faint", id = 5121870961},
+    {name = "Idle", id = 782841498},
+    {name = "Walk", id = 507777826},
+    {name = "Run", id = 507767714},
+    {name = "Jump", id = 507765000},
+    {name = "Fall", id = 507767968},
+    {name = "Swim", id = 507784897},
+    {name = "Climb", id = 507765644},
+    {name = "Sit", id = 2506281703},
+    {name = "Lay", id = 4483362458},
+    {name = "Spin", id = 188632011},
+    {name = "Cartwheel", id = 389832450},
+    {name = "Backflip", id = 35154961},
+    {name = "Frontflip", id = 150627520},
+    {name = "Handstand", id = 383893880},
+    {name = "Breakdance", id = 4647443676},
+    {name = "Capoeira", id = 5937444584},
+    {name = "Charleston", id = 4296812341},
+    {name = "Shuffle", id = 4296820571},
+    {name = "Sneak", id = 1132466604},
+    {name = "Stroll", id = 3333432454},
+    {name = "Swagger", id = 3333171782},
+    {name = "Toilet", id = 4415132405},
 }
 
-for _, name in pairs(visualEmotes) do
-    local btn = Instance.new("TextButton", scroll)
-    btn.Size = UDim2.new(0.98, 0, 0, 30)
-    btn.BackgroundColor3 = Color3.fromRGB(38, 40, 44)
-    btn.Text = name
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 13
-    
-    local bC = Instance.new("UICorner", btn)
-    bC.CornerRadius = UDim.new(0, 4)
-    
-    btn.MouseButton1Click:Connect(function()
-        pcall(function() game:GetService("GuiService"):PlayEmote(name) end)
+local currentEmotes = {}
+local currentPage = 1
+local EMOTES_PER_PAGE = 30
+
+-- FUNCIÓN PARA CREAR BOTÓN DE EMOTE
+local function CreateEmoteButton(emote, index)
+    local btn = Instance.new("ImageButton")
+    btn.Name = emote.name
+    btn.Size = UDim2.new(0, 78, 0, 78)
+    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    btn.BorderSizePixel = 0
+    btn.Image = "rbxassetid://".. emote.id
+    btn.ImageColor3 = Color3.fromRGB(220, 220, 220)
+    btn.ScaleType = Enum.ScaleType.Fit
+    btn.LayoutOrder = index
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+
+    local stroke = Instance.new("UIStroke", btn)
+    stroke.Color = Color3.fromRGB(60, 60, 60)
+    stroke.Thickness = 1
+    stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+    btn.MouseEnter:Connect(function()
+        btn.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+        stroke.Color = Color3.fromRGB(0, 255, 120)
     end)
+
+    btn.MouseLeave:Connect(function()
+        btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        stroke.Color = Color3.fromRGB(60, 60, 60)
+    end)
+
+    btn.MouseButton1Click:Connect(function()
+        local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            local anim = Instance.new("Animation")
+            anim.AnimationId = "rbxassetid://".. emote.id
+            local track = humanoid:LoadAnimation(anim)
+            track:Play()
+        end
+    end)
+
+    return btn
 end
 
-scroll.CanvasSize = UDim2.new(0, 0, 0, #visualEmotes * 35)
+-- FUNCIÓN PARA MOSTRAR PÁGINA
+local function ShowPage(page)
+    for _, child in pairs(EmoteContainer:GetChildren()) do
+        if child:IsA("ImageButton") then child:Destroy() end
+    end
 
--- // FUNCIONES DE INTERACCIÓN
-bubble.MouseButton1Click:Connect(function()
-    main.Visible = not main.Visible
+    local startIdx = (page - 1) * EMOTES_PER_PAGE + 1
+    local endIdx = math.min(page * EMOTES_PER_PAGE, #currentEmotes)
+
+    for i = startIdx, endIdx do
+        local emote = currentEmotes[i]
+        if emote then
+            local btn = CreateEmoteButton(emote, i)
+            btn.Parent = EmoteContainer
+        end
+    end
+
+    local rows = math.ceil((endIdx - startIdx + 1) / 6)
+    EmoteContainer.CanvasSize = UDim2.new(0, 0, 0, rows * 84)
+end
+
+-- BÚSQUEDA
+SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+    local query = SearchBox.Text:lower()
+    if query == "" then
+        currentEmotes = Emotes
+    else
+        currentEmotes = {}
+        for _, emote in ipairs(Emotes) do
+            if emote.name:lower():find(query) then
+                table.insert(currentEmotes, emote)
+            end
+        end
+    end
+    currentPage = 1
+    ShowPage(1)
 end)
 
-freeBtn.MouseButton1Click:Connect(function()
-    -- Carga el script de 50k emotes que mandaste en el txt
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/H20CalibreYT/SystemBroken/main/AllEmotes"))()
+-- SORT
+local sortAZ = true
+SortBtn.MouseButton1Click:Connect(function()
+    sortAZ = not sortAZ
+    table.sort(currentEmotes, function(a, b)
+        if sortAZ then
+            return a.name < b.name
+        else
+            return a.name > b.name
+        end
+    end)
+    ShowPage(currentPage)
+    SortBtn.Text = sortAZ and "Sort A-Z" or "Sort Z-A"
 end)
 
--- Sistema de arrastre para la burbuja
-local dragging, dragStart, startPos
-bubble.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = bubble.Position
+-- STOP
+StopBtn.MouseButton1Click:Connect(function()
+    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+            track:Stop()
+        end
     end
 end)
 
-UIS.InputChanged:Connect(function(input)
-    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-        local delta = input.Position - dragStart
-        bubble.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+-- KILL GUI
+KillBtn.MouseButton1Click:Connect(function()
+    EmoteGui:Destroy()
+end)
+
+-- PAGINACIÓN CON SCROLL
+EmoteContainer:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
+    if EmoteContainer.CanvasPosition.Y > EmoteContainer.CanvasSize.Y.Offset - 400 then
+        local totalPages = math.ceil(#currentEmotes / EMOTES_PER_PAGE)
+        if currentPage < totalPages then
+            currentPage = currentPage + 1
+            local startIdx = (currentPage - 1) * EMOTES_PER_PAGE + 1
+            local endIdx = math.min(currentPage * EMOTES_PER_PAGE, #currentEmotes)
+
+            for i = startIdx, endIdx do
+                local emote = currentEmotes[i]
+                if emote then
+                    local btn = CreateEmoteButton(emote, i)
+                    btn.Parent = EmoteContainer
+                end
+            end
+        end
     end
 end)
 
-UIS.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = false
+-- INICIALIZAR
+currentEmotes = Emotes
+ShowPage(1)
+
+-- FUNCIÓN PARA AGREGAR MÁS EMOTES (crea páginas automáticamente)
+function AddEmote(name, id)
+    table.insert(Emotes, {name = name, id = id})
+    if SearchBox.Text == "" then
+        currentEmotes = Emotes
+        ShowPage(1)
     end
-end)
+end
+
+-- Ejemplo: AddEmote("NuevoBaile", 123456789)
