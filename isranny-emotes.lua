@@ -1,4 +1,4 @@
---- Keybind: "," - Emotes v4 (SOLO EMOTES - BUGS FIXED)
+--- Keybind: "," - Emotes v4 (SOLO EMOTES - FINAL BUG-FREE)
 local env = getgenv()
 if env.LastExecuted and tick() - env.LastExecuted < 30 then
     return
@@ -24,7 +24,6 @@ local currentPage, EMOTES_PER_PAGE = 1, 300
 local emoteSpeed = 1
 local canWalk = false
 local currentTrack = nil
-local activeConnection = nil -- 🔧 FIX: Guardar conexión para desconectar
 
 local ELECTRIC_BLUE = Color3.fromRGB(0, 200, 255)
 
@@ -251,83 +250,83 @@ local Emotes = {
     -- Agrega más emotes aquí con el mismo formato
 }
 
--- 🔧 FUNCIÓN MEJORADA: Limpia TODO antes de reproducir
-local function StopAllAnimations()
-    if activeConnection then
-        activeConnection:Disconnect()
-        activeConnection = nil
-    end
+-- 🔥 FUNCIÓN FINAL CON FAILSAFE
+local function PlayEmote(name, id)
+    local char = LocalPlayer.Character
+    if not char then return end
 
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not hum then return end
+
+    local animator = hum:FindFirstChildOfClass("Animator")
+    if not animator then return end
+
+    -- 🔥 LIMPIEZA TOTAL (incluye el anterior SIEMPRE)
     if currentTrack then
-        currentTrack:Stop(0)
-        currentTrack:Destroy()
+        pcall(function()
+            currentTrack:Stop(0)
+            currentTrack:Destroy()
+        end)
         currentTrack = nil
     end
 
-    -- Mata TODOS los tracks del humanoid para evitar bugs
-    local char = LocalPlayer.Character
-    if char then
-        local hum = char:FindFirstChildOfClass("Humanoid")
-        local animator = hum and hum:FindFirstChildOfClass("Animator")
-        if animator then
-            for _, track in pairs(animator:GetPlayingAnimationTracks()) do
-                track:Stop(0)
+    for _, track in pairs(animator:GetPlayingAnimationTracks()) do
+        pcall(function()
+            track:Stop(0)
+            track:Destroy()
+        end)
+    end
+
+    task.wait(0.05) -- 🔥 más estable que wait()
+
+    -- 🔥 NUEVA ANIMACIÓN
+    local anim = Instance.new("Animation")
+    anim.AnimationId = "rbxassetid://"..id
+
+    local track = animator:LoadAnimation(anim)
+    currentTrack = track
+
+    -- 🔥 CONFIG PRO
+    track.Priority = canWalk and Enum.AnimationPriority.Movement or Enum.AnimationPriority.Action
+    track.Looped = canWalk
+    track:AdjustSpeed(emoteSpeed)
+
+    track:Play()
+
+    -- 🔥 FAILSAFE (por si Stopped no se dispara)
+    task.delay(10, function()
+        if track and track == currentTrack then
+            pcall(function()
+                track:Stop()
                 track:Destroy()
-            end
+            end)
+            currentTrack = nil
         end
-    end
-end
-
--- Reproducir emote - VERSIÓN FIXED
-local function PlayEmote(name, id)
-    local char = LocalPlayer.Character
-    if not char then
-        StarterGui:SetCore("SendNotification", {Title = "Error", Text = "Esperando personaje...", Duration = 2})
-        return
-    end
-
-    local hum = char:FindFirstChildOfClass("Humanoid")
-    if not hum then
-        StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No se encontró Humanoid", Duration = 2})
-        return
-    end
-
-    -- 🔧 FIX 1: Limpiar TODO antes de reproducir nuevo emote
-    StopAllAnimations()
-    task.wait(0.05) -- Pequeño delay para que Roblox procese
-
-    local success, track = pcall(function()
-        return hum:PlayEmoteAndGetAnimTrackById(id)
+        if anim then
+            anim:Destroy()
+        end
     end)
 
-    if success and track then
-        currentTrack = track
-
-        -- 🔧 FIX 2: WALK MODE FUNCIONA AHORA
-        if canWalk then
-            track.Priority = Enum.AnimationPriority.Action4 -- Máxima prioridad
-            track.Looped = true
-            -- No detener el track cuando caminas
-            activeConnection = hum:GetPropertyChangedSignal("MoveDirection"):Connect(function()
-                if track and track.IsPlaying then
-                    track:AdjustWeight(1, 0.2) -- Mantener peso completo
-                end
+    -- 🔥 SI funciona, mejor
+    track.Stopped:Connect(function()
+        if track then
+            pcall(function()
+                track:Destroy()
             end)
-        else
-            track.Priority = Enum.AnimationPriority.Idle
-            track.Looped = false
         end
-
-        track:AdjustSpeed(emoteSpeed)
-
-        if not track.IsPlaying then
-            track:Play()
+        if anim then
+            anim:Destroy()
         end
+        if currentTrack == track then
+            currentTrack = nil
+        end
+    end)
 
-        StarterGui:SetCore("SendNotification", {Title = "✓ ".. name, Text = "Emote reproducido", Duration = 2})
-    else
-        StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No se pudo reproducir: ".. name, Duration = 2})
-    end
+    StarterGui:SetCore("SendNotification", {
+        Title = "✓ "..name,
+        Text = "Emote reproducido",
+        Duration = 2
+    })
 
     BackFrame.Visible = false
     Open.Text = "Open"
@@ -423,13 +422,12 @@ WalkButton.MouseButton1Click:Connect(function()
     WalkButton.Text = "Walk: ".. (canWalk and "ON" or "OFF")
     WalkButton.BackgroundColor3 = canWalk and Color3.fromRGB(0, 100, 0) or Color3.fromRGB(100, 0, 0)
 
-    -- 🔧 FIX: Actualizar track actual si existe
     if currentTrack and currentTrack.IsPlaying then
         if canWalk then
-            currentTrack.Priority = Enum.AnimationPriority.Action4
+            currentTrack.Priority = Enum.AnimationPriority.Movement
             currentTrack.Looped = true
         else
-            currentTrack.Priority = Enum.AnimationPriority.Idle
+            currentTrack.Priority = Enum.AnimationPriority.Action
             currentTrack.Looped = false
         end
     end
@@ -468,7 +466,12 @@ end)
 
 LocalPlayer.CharacterAdded:Connect(function()
     task.wait(2)
-    StopAllAnimations() -- Limpiar al respawnear
+    -- Limpiar al respawnear
+    for _, track in pairs(LocalPlayer.Character.Humanoid:GetPlayingAnimationTracks()) do
+        track:Stop(0)
+        track:Destroy()
+    end
+    currentTrack = nil
     currentPage = 1
     ShowPage(1)
 end)
