@@ -2160,7 +2160,6 @@ addEmote("Boy's a Liar", 118115683204335, 0, "Jan 01, 2024")
 addEmote("Kazotsky Kick Dance", 75954155820284, 0, "Jan 01, 2024")
 addEmote("Rizz Pose", 107890403470280, 0, "Jan 01, 2024")
 addEmote("♡ [LOOP] cute sitting kicking feet emote", 92676668301699, 0, "Jan 01, 2024")
-
 addEmote("Jackhammer", 133156019892327, 0, "Jan 01, 2024")
 addEmote("GANGNAM STYLE", 128719021861443, 0, "Jan 01, 2024")
 addEmote("Headflip", 140185130376422, 0, "Jan 01, 2024")
