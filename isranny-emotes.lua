@@ -1544,7 +1544,6 @@ addEmote("Deltarune - Tenna Dance", 73715378215546, 39, "Aug 08, 2025")
 
 addEmote("California Girl", 132074413582912, 39, "Aug 08, 2025")
 addEmote("Default Dance", 80877772569772, 39, "Aug 08, 2025")
-
 addEmote("Shocked meme", 129501229484294, 39, "Aug 08, 2025")
 addEmote("Family Guy", 78459263478161, 39, "Aug 08, 2025")
 addEmote("Car Transformation", 96887377943085, 39, "Aug 08, 2025")
