@@ -1,4 +1,3 @@
---- Keybind: "," - Emotes & Animations COMPLETO
 local env=getgenv()
 if env.LastExecuted and tick()-env.LastExecuted<30 then return end
 env.LastExecuted=tick()
