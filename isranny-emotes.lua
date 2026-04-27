@@ -1563,7 +1563,7 @@ addEmote("Nya Anime Dance", 126647057611522, 39, "Aug 08, 2025")
 addEmote("Do that thang", 113772829398170, 39, "Aug 08, 2025")
 addEmote("Squat?", 95441477641149, 39, "Aug 08, 2025")
 addEmote("Slickback", 103789826265487, 39, "Aug 08, 2025")
-
+addEmote("Rambunctious", 108128682361404, 0, "Jan 01, 2024")
 
 
 
