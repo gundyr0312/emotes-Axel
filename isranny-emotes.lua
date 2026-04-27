@@ -1449,7 +1449,6 @@ addEmote("Jumpstyle", 99563839802389, 39, "Aug 08, 2025")
 
 addEmote("Flopping Fish", 133142324349281, 39, "Aug 08, 2025")
 addEmote("Kicking Feet Sit", 78758922757947, 39, "Aug 08, 2025")
-
 addEmote("Fancy Feets", 124512151372711, 39, "Aug 08, 2025")
 addEmote("Cute Sit", 90244178386698, 39, "Aug 08, 2025")
 addEmote("Absolute Cinema", 97258018304125, 39, "Aug 08, 2025")
