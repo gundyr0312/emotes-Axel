@@ -1,4 +1,4 @@
---- Keybind: "," - Emotes & Animations v3 (Full Packages)
+--- Keybind: "," - Emotes & Animations v4 (FULL PACKAGES)
 local env=getgenv()
 if env.LastExecuted and tick()-env.LastExecuted<30 then return end
 env.LastExecuted=tick()
@@ -11,18 +11,20 @@ end
 wait(0.5)
 
 local ContextActionService = game:GetService("ContextActionService")
-local HttpService = game:GetService("HttpService")
-local GuiService = game:GetService("GuiService")
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
 local StarterGui = game:GetService("StarterGui")
-local UserInputService = game:GetService("UserInputService")
 
 local currentPage, EMOTES_PER_PAGE = 1, 300
 local currentMode = "Emotes"
 local emoteSpeed = 1
 local canWalk = false
 local currentTrack = nil
+
+-- Para animaciones completas
+env.AnimConnection = nil
+env.IdleConnection = nil
+env.CurrentAnimTracks = {}
 
 local ELECTRIC_BLUE = Color3.fromRGB(0, 200, 255)
 
@@ -255,7 +257,9 @@ local Emotes = {
     { name = "Salute", id = 3360689775, icon = "rbxthumb://type=Asset&id=3360689775&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
 }
 -- ============================================
--- PEGA TUS ANIMACIONES AQUÍ - 51 PAQUETES COMPLETOS
+
+-- ============================================
+-- 51 ANIMACIONES COMPLETAS
 -- ============================================
 local Animations = {
     { name = "Zombie", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
@@ -281,34 +285,8 @@ local Animations = {
     { name = "Sneak", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
     { name = "Confident", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
     { name = "Adidas Sports", id = 616163682, icon = "rbxthumb://type=Asset&id=616163682&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Adidas Community", id = 616163682, icon = "rbxthumb://type=Asset&id=616163682&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
     { name = "NFL", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "No Boundaries", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
     { name = "Catwalk Glam", id = 616156119, icon = "rbxthumb://type=Asset&id=616156119&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Wicked Popular", id = 616156119, icon = "rbxthumb://type=Asset&id=616156119&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Wicked Dancing", id = 616156119, icon = "rbxthumb://type=Asset&id=616156119&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Dramatic", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Fashionable", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Hero", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Power Walk", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Casual", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Sprint", id = 616163682, icon = "rbxthumb://type=Asset&id=616163682&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Jog", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Speed Run", id = 656118852, icon = "rbxthumb://type=Asset&id=656118852&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Super Run", id = 616163682, icon = "rbxthumb://type=Asset&id=616163682&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Princess", id = 616156119, icon = "rbxthumb://type=Asset&id=616156119&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Cowboy", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Soldier", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Spy", id = 656118852, icon = "rbxthumb://type=Asset&id=656118852&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Thief", id = 656118852, icon = "rbxthumb://type=Asset&id=656118852&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Creepy", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Monster", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Alien", id = 616157476, icon = "rbxthumb://type=Asset&id=616157476&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Ghost", id = 616157476, icon = "rbxthumb://type=Asset&id=616157476&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "R15 Default", id = 507766388, icon = "rbxthumb://type=Asset&id=507766388&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "R15 Blocky", id = 507766388, icon = "rbxthumb://type=Asset&id=507766388&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "R15 Woman", id = 507766388, icon = "rbxthumb://type=Asset&id=507766388&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "R15 Man", id = 507766388, icon = "rbxthumb://type=Asset&id=507766388&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
 }
 -- ============================================
 
@@ -322,47 +300,70 @@ local function PlayAnimation(name, id)
     if not char then return end
     local hum = char:FindFirstChildOfClass("Humanoid")
     if not hum then return end
-    local animate = char:FindFirstChild("Animate")
 
+    -- Limpiar animaciones anteriores
     if currentTrack then currentTrack:Stop() end
-    currentTrack = nil
-
+    if env.AnimConnection then env.AnimConnection:Disconnect() end
+    if env.IdleConnection then env.IdleConnection:Disconnect() end
+    for _, track in pairs(env.CurrentAnimTracks) do
+        if track then track:Stop() end
+    end
+    env.CurrentAnimTracks = {}
     for _, track in pairs(hum:GetPlayingAnimationTracks()) do
         track:Stop()
     end
 
-    if animate then
-        local walk = animate:FindFirstChild("walk") and animate.walk:FindFirstChild("WalkAnim")
-        if walk then walk.AnimationId = "rbxassetid://"..id end
+    -- Crear sistema de animaciones
+    local animObj = Instance.new("Animation")
+    animObj.AnimationId = "rbxassetid://"..id
 
-        local run = animate:FindFirstChild("run") and animate.run:FindFirstChild("RunAnim")
-        if run then run.AnimationId = "rbxassetid://"..id end
+    local tracks = {}
+    local currentState = "idle"
 
-        local idle = animate:FindFirstChild("idle")
-        if idle then
-            local idle1 = idle:FindFirstChild("Animation1")
-            local idle2 = idle:FindFirstChild("Animation2")
-            if idle1 then idle1.AnimationId = "rbxassetid://"..id end
-            if idle2 then idle2.AnimationId = "rbxassetid://"..id end
+    local function getTrack()
+        if not tracks[currentState] then
+            tracks[currentState] = hum:LoadAnimation(animObj)
+            tracks[currentState].Priority = Enum.AnimationPriority.Movement
+            tracks[currentState].Looped = true
+            table.insert(env.CurrentAnimTracks, tracks[currentState])
         end
-
-        local jump = animate:FindFirstChild("jump") and animate.jump:FindFirstChild("JumpAnim")
-        if jump then jump.AnimationId = "rbxassetid://"..id end
-
-        local fall = animate:FindFirstChild("fall") and animate.fall:FindFirstChild("FallAnim")
-        if fall then fall.AnimationId = "rbxassetid://"..id end
+        return tracks[currentState]
     end
 
-    hum.WalkSpeed = 16
+    local function playState(state)
+        if currentState ~= state and tracks[currentState] then
+            tracks[currentState]:Stop(0.2)
+        end
+        currentState = state
+        local track = getTrack()
+        if not track.IsPlaying then
+            track:Play(0.2, 1, emoteSpeed)
+        else
+            track:AdjustSpeed(emoteSpeed)
+        end
+    end
+
+    -- Conectar eventos
+    env.AnimConnection = hum.Running:Connect(function(speed)
+        if speed > 0.1 then
+            playState("walk")
+        else
+            playState("idle")
+        end
+    end)
+
+    env.IdleConnection = hum.StateChanged:Connect(function(_, new)
+        if new == Enum.HumanoidStateType.Jumping or new == Enum.HumanoidStateType.Freefall then
+            playState("jump")
+        end
+    end)
+
+    -- Iniciar
+    playState("idle")
 
     BackFrame.Visible = false
     Open.Text = "Open"
-
-    StarterGui:SetCore("SendNotification", {
-        Title = "✓ Animación Aplicada",
-        Text = name.." - Camina para probar",
-        Duration = 3
-    })
+    StarterGui:SetCore("SendNotification", {Title = "✓ "..name, Text = "Camina y salta para probar", Duration = 3})
 end
 
 local function PlayEmote(name, id)
@@ -371,27 +372,22 @@ local function PlayEmote(name, id)
     local hum = char:FindFirstChildOfClass("Humanoid")
     if not hum then return end
     local desc = hum:FindFirstChildOfClass("HumanoidDescription")
-    if not desc then return end
+    if not desc then desc = Instance.new("HumanoidDescription", hum) end
 
     if currentTrack then currentTrack:Stop() end
+    if env.AnimConnection then env.AnimConnection:Disconnect() end
+    if env.IdleConnection then env.IdleConnection:Disconnect() end
 
     if hum.RigType ~= Enum.HumanoidRigType.R6 then
-        local success, track = pcall(function()
-            return hum:PlayEmoteAndGetAnimTrackById(id)
-        end)
+        local success, track = pcall(function() return hum:PlayEmoteAndGetAnimTrackById(id) end)
+        if not success then
+            pcall(function() desc:AddEmote(name, id) end)
+            success, track = pcall(function() return hum:PlayEmoteAndGetAnimTrackById(id) end)
+        end
         if success and track then
             currentTrack = track
             track:AdjustSpeed(emoteSpeed)
-            if canWalk then
-                track.Priority = Enum.AnimationPriority.Action
-            end
-        else
-            pcall(function() desc:AddEmote(name, id) end)
-            local _, track2 = pcall(function() return hum:PlayEmoteAndGetAnimTrackById(id) end)
-            if track2 then
-                currentTrack = track2
-                track2:AdjustSpeed(emoteSpeed)
-            end
+            if canWalk then track.Priority = Enum.AnimationPriority.Action end
         end
     end
     BackFrame.Visible = false
@@ -400,16 +396,13 @@ end
 
 local function ShowPage(page)
     for _,v in pairs(Frame:GetChildren()) do if not v:IsA("UIGridLayout") then v:Destroy() end end
-
     local list = currentMode == "Emotes" and Emotes or Animations
     local startIdx = (page - 1) * EMOTES_PER_PAGE + 1
     local endIdx = math.min(page * EMOTES_PER_PAGE, #list)
     local totalPages = math.ceil(#list / EMOTES_PER_PAGE)
-
     PageLabel.Text = page.."/"..totalPages
     PrevPage.Visible = page > 1
     NextPage.Visible = page < totalPages
-
     for i = startIdx, endIdx do
         local item = list[i]
         if item then
@@ -423,28 +416,15 @@ local function ShowPage(page)
             btn.Parent = Frame
             Corner:Clone().Parent = btn
             Instance.new("UIAspectRatioConstraint", btn).AspectType = Enum.AspectType.ScaleWithParentSize
-
             local btnStroke = Instance.new("UIStroke", btn)
             btnStroke.Color = ELECTRIC_BLUE
             btnStroke.Thickness = 1.5
             btnStroke.Transparency = 0.6
-
             btn.MouseButton1Click:Connect(function()
-                if currentMode == "Emotes" then
-                    PlayEmote(item.name, item.id)
-                else
-                    PlayAnimation(item.name, item.id)
-                end
+                if currentMode == "Emotes" then PlayEmote(item.name, item.id) else PlayAnimation(item.name, item.id) end
             end)
-            btn.MouseEnter:Connect(function()
-                EmoteName.Text = item.name
-                btnStroke.Transparency = 0
-                btnStroke.Thickness = 2.5
-            end)
-            btn.MouseLeave:Connect(function()
-                btnStroke.Transparency = 0.6
-                btnStroke.Thickness = 1.5
-            end)
+            btn.MouseEnter:Connect(function() EmoteName.Text = item.name btnStroke.Transparency = 0 btnStroke.Thickness = 2.5 end)
+            btn.MouseLeave:Connect(function() btnStroke.Transparency = 0.6 btnStroke.Thickness = 1.5 end)
         end
     end
 end
@@ -461,33 +441,15 @@ WalkButton.MouseButton1Click:Connect(function()
     canWalk = not canWalk
     WalkButton.Text = "Walk: ".. (canWalk and "ON" or "OFF")
     WalkButton.BackgroundColor3 = canWalk and Color3.fromRGB(0,100,0) or Color3.fromRGB(100,0,0)
-    if currentTrack then
-        currentTrack.Priority = canWalk and Enum.AnimationPriority.Action or Enum.AnimationPriority.Movement
-    end
+    if currentTrack then currentTrack.Priority = canWalk and Enum.AnimationPriority.Action or Enum.AnimationPriority.Movement end
 end)
 
-SpeedUp.MouseButton1Click:Connect(function()
-    emoteSpeed = math.min(emoteSpeed + 0.25, 3)
-    SpeedLabel.Text = "Speed: "..emoteSpeed.."x"
-    if currentTrack then currentTrack:AdjustSpeed(emoteSpeed) end
-end)
-
-SpeedDown.MouseButton1Click:Connect(function()
-    emoteSpeed = math.max(emoteSpeed - 0.25, 0.25)
-    SpeedLabel.Text = "Speed: "..emoteSpeed.."x"
-    if currentTrack then currentTrack:AdjustSpeed(emoteSpeed) end
-end)
-
-PrevPage.MouseButton1Click:Connect(function()
-    if currentPage > 1 then currentPage -= 1 ShowPage(currentPage) end
-end)
-
-NextPage.MouseButton1Click:Connect(function()
-    local total = math.ceil((currentMode == "Emotes" and #Emotes or #Animations) / EMOTES_PER_PAGE)
-    if currentPage < total then currentPage += 1 ShowPage(currentPage) end
-end)
+SpeedUp.MouseButton1Click:Connect(function() emoteSpeed = math.min(emoteSpeed + 0.25, 3) SpeedLabel.Text = "Speed: "..emoteSpeed.."x" if currentTrack then currentTrack:AdjustSpeed(emoteSpeed) end for _,t in pairs(env.CurrentAnimTracks) do if t then t:AdjustSpeed(emoteSpeed) end end end)
+SpeedDown.MouseButton1Click:Connect(function() emoteSpeed = math.max(emoteSpeed - 0.25, 0.25) SpeedLabel.Text = "Speed: "..emoteSpeed.."x" if currentTrack then currentTrack:AdjustSpeed(emoteSpeed) end for _,t in pairs(env.CurrentAnimTracks) do if t then t:AdjustSpeed(emoteSpeed) end end end)
+PrevPage.MouseButton1Click:Connect(function() if currentPage > 1 then currentPage -= 1 ShowPage(currentPage) end end)
+NextPage.MouseButton1Click:Connect(function() local total = math.ceil((currentMode == "Emotes" and #Emotes or #Animations) / EMOTES_PER_PAGE) if currentPage < total then currentPage += 1 ShowPage(currentPage) end end)
 
 LocalPlayer.CharacterAdded:Connect(function() task.wait(1) ShowPage(1) end)
 if LocalPlayer.Character then ShowPage(1) end
 
-StarterGui:SetCore("SendNotification",{Title = "Ready!", Text = "Press, to open", Duration = 5})
+StarterGui:SetCore("SendNotification",{Title = "Ready!", Text = "Press, to open - 25 anims loaded", Duration = 5})
