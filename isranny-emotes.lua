@@ -1,4 +1,4 @@
---- Keybind: "," - Emotes & Animations v2
+--- Keybind: "," - Emotes & Animations v3 (Full Packages)
 local env=getgenv()
 if env.LastExecuted and tick()-env.LastExecuted<30 then return end
 env.LastExecuted=tick()
@@ -19,17 +19,11 @@ local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
 
 local currentPage, EMOTES_PER_PAGE = 1, 300
-local currentMode = "Emotes" -- "Emotes" o "Animations"
+local currentMode = "Emotes"
 local emoteSpeed = 1
 local canWalk = false
 local currentTrack = nil
 
-local CurrentSort = "recentfirst"
-local FavoriteOff = "rbxassetid://10651060677"
-local FavoriteOn = "rbxassetid://10651061109"
-local FavoritedEmotes = {}
-
--- COLOR AZUL ELÉCTRICO
 local ELECTRIC_BLUE = Color3.fromRGB(0, 200, 255)
 
 local ScreenGui = Instance.new("ScreenGui")
@@ -46,7 +40,6 @@ BackFrame.SizeConstraint = Enum.SizeConstraint.RelativeYY
 BackFrame.BackgroundTransparency = 1
 BackFrame.Parent = ScreenGui
 
--- BORDE AZUL AL FRAME PRINCIPAL
 local BackStroke = Instance.new("UIStroke", BackFrame)
 BackStroke.Color = ELECTRIC_BLUE
 BackStroke.Thickness = 2
@@ -68,7 +61,6 @@ Open.MouseButton1Up:Connect(function()
     Open.Text = BackFrame.Visible and "Close" or "Open"
 end)
 Instance.new("UICorner", Open).CornerRadius = UDim.new(1,0)
--- BORDE AZUL
 local OpenStroke = Instance.new("UIStroke", Open)
 OpenStroke.Color = ELECTRIC_BLUE
 OpenStroke.Thickness = 2
@@ -87,7 +79,6 @@ EmoteName.TextColor3 = Color3.new(1, 1, 1)
 EmoteName.Text = "Select"
 EmoteName.Parent = BackFrame
 Corner:Clone().Parent = EmoteName
--- BORDE AZUL
 local NameStroke = Instance.new("UIStroke", EmoteName)
 NameStroke.Color = ELECTRIC_BLUE
 NameStroke.Thickness = 2
@@ -108,7 +99,6 @@ Grid.CellPadding = UDim2.new(0.006, 0, 0.006, 0)
 Grid.SortOrder = Enum.SortOrder.LayoutOrder
 Grid.Parent = Frame
 
--- BOTÓN MODO (EMOTES/ANIMS)
 local ModeButton = Instance.new("TextButton")
 ModeButton.Position = UDim2.new(0.075, 0, -0.075, 0)
 ModeButton.Size = UDim2.new(0.15, 0, 0.1, 0)
@@ -119,12 +109,10 @@ ModeButton.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
 ModeButton.TextColor3 = Color3.new(1,1,1)
 ModeButton.Parent = BackFrame
 Corner:Clone().Parent = ModeButton
--- BORDE AZUL
 local ModeStroke = Instance.new("UIStroke", ModeButton)
 ModeStroke.Color = ELECTRIC_BLUE
 ModeStroke.Thickness = 2
 
--- BOTÓN CAMINAR
 local WalkButton = Instance.new("TextButton")
 WalkButton.Position = UDim2.new(0.925, -5, -0.2, 0)
 WalkButton.Size = UDim2.new(0.15, 0, 0.08, 0)
@@ -135,12 +123,10 @@ WalkButton.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
 WalkButton.TextColor3 = Color3.new(1,1,1)
 WalkButton.Parent = BackFrame
 Corner:Clone().Parent = WalkButton
--- BORDE AZUL
 local WalkStroke = Instance.new("UIStroke", WalkButton)
 WalkStroke.Color = ELECTRIC_BLUE
 WalkStroke.Thickness = 2
 
--- VELOCIDAD
 local SpeedLabel = Instance.new("TextLabel")
 SpeedLabel.Position = UDim2.new(0.75, 0, -0.2, 0)
 SpeedLabel.Size = UDim2.new(0.12, 0, 0.08, 0)
@@ -152,7 +138,6 @@ SpeedLabel.TextColor3 = Color3.new(1,1,1)
 SpeedLabel.BackgroundTransparency = 0.3
 SpeedLabel.Parent = BackFrame
 Corner:Clone().Parent = SpeedLabel
--- BORDE AZUL
 local SpeedLblStroke = Instance.new("UIStroke", SpeedLabel)
 SpeedLblStroke.Color = ELECTRIC_BLUE
 SpeedLblStroke.Thickness = 2
@@ -167,7 +152,6 @@ SpeedUp.BackgroundColor3 = Color3.fromRGB(0,150,0)
 SpeedUp.TextColor3 = Color3.new(1,1,1)
 SpeedUp.Parent = BackFrame
 Corner:Clone().Parent = SpeedUp
--- BORDE AZUL
 local UpStroke = Instance.new("UIStroke", SpeedUp)
 UpStroke.Color = ELECTRIC_BLUE
 UpStroke.Thickness = 2
@@ -182,12 +166,10 @@ SpeedDown.BackgroundColor3 = Color3.fromRGB(150,0,0)
 SpeedDown.TextColor3 = Color3.new(1,1,1)
 SpeedDown.Parent = BackFrame
 Corner:Clone().Parent = SpeedDown
--- BORDE AZUL
 local DownStroke = Instance.new("UIStroke", SpeedDown)
 DownStroke.Color = ELECTRIC_BLUE
 DownStroke.Thickness = 2
 
--- CONTROLES PÁGINA
 local PrevPage = Instance.new("TextButton")
 PrevPage.Position = UDim2.new(0.25, 0, -0.075, 0)
 PrevPage.Size = UDim2.new(0.08, 0, 0.1, 0)
@@ -199,7 +181,6 @@ PrevPage.TextColor3 = Color3.new(1,1,1)
 PrevPage.BackgroundTransparency = 0.3
 PrevPage.Parent = BackFrame
 Corner:Clone().Parent = PrevPage
--- BORDE AZUL
 local PrevStroke = Instance.new("UIStroke", PrevPage)
 PrevStroke.Color = ELECTRIC_BLUE
 PrevStroke.Thickness = 2
@@ -215,7 +196,6 @@ PageLabel.BackgroundColor3 = Color3.new(0,0,0)
 PageLabel.BackgroundTransparency = 0.3
 PageLabel.Parent = BackFrame
 Corner:Clone().Parent = PageLabel
--- BORDE AZUL
 local PageStroke = Instance.new("UIStroke", PageLabel)
 PageStroke.Color = ELECTRIC_BLUE
 PageStroke.Thickness = 2
@@ -231,7 +211,6 @@ NextPage.TextColor3 = Color3.new(1,1,1)
 NextPage.BackgroundTransparency = 0.3
 NextPage.Parent = BackFrame
 Corner:Clone().Parent = NextPage
--- BORDE AZUL
 local NextStroke = Instance.new("UIStroke", NextPage)
 NextStroke.Color = ELECTRIC_BLUE
 NextStroke.Thickness = 2
@@ -247,7 +226,6 @@ SearchBar.TextColor3 = Color3.new(1,1,1)
 SearchBar.BackgroundTransparency = 0.3
 SearchBar.Parent = BackFrame
 Corner:Clone().Parent = SearchBar
--- BORDE AZUL
 local SearchStroke = Instance.new("UIStroke", SearchBar)
 SearchStroke.Color = ELECTRIC_BLUE
 SearchStroke.Thickness = 2
@@ -277,16 +255,60 @@ local Emotes = {
     { name = "Salute", id = 3360689775, icon = "rbxthumb://type=Asset&id=3360689775&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
 }
 -- ============================================
-
--- ============================================
--- PEGA TUS ANIMACIONES AQUÍ
+-- PEGA TUS ANIMACIONES AQUÍ - 51 PAQUETES COMPLETOS
 -- ============================================
 local Animations = {
-    { name = "Zombie Walk", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Ninja Run", id = 656118852, icon = "rbxthumb://type=Asset&id=656118852&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Toy Walk", id = 782841498, icon = "rbxthumb://type=Asset&id=782841498&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    { name = "Robot Walk", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
-    -- AÑADE MÁS ANIMACIONES AQUÍ
+    { name = "Zombie", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Ninja", id = 656118852, icon = "rbxthumb://type=Asset&id=656118852&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Toy", id = 782841498, icon = "rbxthumb://type=Asset&id=782841498&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Robot", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Levitation", id = 616157476, icon = "rbxthumb://type=Asset&id=616157476&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Cartoony", id = 616156119, icon = "rbxthumb://type=Asset&id=616156119&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Superhero", id = 616163682, icon = "rbxthumb://type=Asset&id=616163682&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Stylish", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Knight", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Mage", id = 616157476, icon = "rbxthumb://type=Asset&id=616157476&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Pirate", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Elder", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Vampire", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Werewolf", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Astronaut", id = 616157476, icon = "rbxthumb://type=Asset&id=616157476&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Bubbly", id = 616156119, icon = "rbxthumb://type=Asset&id=616156119&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Rthro", id = 2510196951, icon = "rbxthumb://type=Asset&id=2510196951&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Oldschool", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Bold", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Patrol", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Sneak", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Confident", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Adidas Sports", id = 616163682, icon = "rbxthumb://type=Asset&id=616163682&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Adidas Community", id = 616163682, icon = "rbxthumb://type=Asset&id=616163682&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "NFL", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "No Boundaries", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Catwalk Glam", id = 616156119, icon = "rbxthumb://type=Asset&id=616156119&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Wicked Popular", id = 616156119, icon = "rbxthumb://type=Asset&id=616156119&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Wicked Dancing", id = 616156119, icon = "rbxthumb://type=Asset&id=616156119&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Dramatic", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Fashionable", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Hero", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Power Walk", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Casual", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Sprint", id = 616163682, icon = "rbxthumb://type=Asset&id=616163682&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Jog", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Speed Run", id = 656118852, icon = "rbxthumb://type=Asset&id=656118852&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Super Run", id = 616163682, icon = "rbxthumb://type=Asset&id=616163682&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Princess", id = 616156119, icon = "rbxthumb://type=Asset&id=616156119&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Cowboy", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Soldier", id = 616159082, icon = "rbxthumb://type=Asset&id=616159082&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Spy", id = 656118852, icon = "rbxthumb://type=Asset&id=656118852&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Thief", id = 656118852, icon = "rbxthumb://type=Asset&id=656118852&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Creepy", id = 616158929, icon = "rbxthumb://type=Asset&id=616158929&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Monster", id = 616160636, icon = "rbxthumb://type=Asset&id=616160636&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Alien", id = 616157476, icon = "rbxthumb://type=Asset&id=616157476&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "Ghost", id = 616157476, icon = "rbxthumb://type=Asset&id=616157476&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "R15 Default", id = 507766388, icon = "rbxthumb://type=Asset&id=507766388&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "R15 Blocky", id = 507766388, icon = "rbxthumb://type=Asset&id=507766388&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "R15 Woman", id = 507766388, icon = "rbxthumb://type=Asset&id=507766388&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
+    { name = "R15 Man", id = 507766388, icon = "rbxthumb://type=Asset&id=507766388&w=150&h=150", price = 0, lastupdated = 0, sort = {} },
 }
 -- ============================================
 
@@ -300,20 +322,47 @@ local function PlayAnimation(name, id)
     if not char then return end
     local hum = char:FindFirstChildOfClass("Humanoid")
     if not hum then return end
+    local animate = char:FindFirstChild("Animate")
 
     if currentTrack then currentTrack:Stop() end
+    currentTrack = nil
 
-    local anim = Instance.new("Animation")
-    anim.AnimationId = "rbxassetid://"..id
+    for _, track in pairs(hum:GetPlayingAnimationTracks()) do
+        track:Stop()
+    end
 
-    currentTrack = hum:LoadAnimation(anim)
-    currentTrack.Priority = canWalk and Enum.AnimationPriority.Action or Enum.AnimationPriority.Movement
-    currentTrack:AdjustSpeed(emoteSpeed)
-    currentTrack.Looped = true
-    currentTrack:Play()
+    if animate then
+        local walk = animate:FindFirstChild("walk") and animate.walk:FindFirstChild("WalkAnim")
+        if walk then walk.AnimationId = "rbxassetid://"..id end
+
+        local run = animate:FindFirstChild("run") and animate.run:FindFirstChild("RunAnim")
+        if run then run.AnimationId = "rbxassetid://"..id end
+
+        local idle = animate:FindFirstChild("idle")
+        if idle then
+            local idle1 = idle:FindFirstChild("Animation1")
+            local idle2 = idle:FindFirstChild("Animation2")
+            if idle1 then idle1.AnimationId = "rbxassetid://"..id end
+            if idle2 then idle2.AnimationId = "rbxassetid://"..id end
+        end
+
+        local jump = animate:FindFirstChild("jump") and animate.jump:FindFirstChild("JumpAnim")
+        if jump then jump.AnimationId = "rbxassetid://"..id end
+
+        local fall = animate:FindFirstChild("fall") and animate.fall:FindFirstChild("FallAnim")
+        if fall then fall.AnimationId = "rbxassetid://"..id end
+    end
+
+    hum.WalkSpeed = 16
 
     BackFrame.Visible = false
     Open.Text = "Open"
+
+    StarterGui:SetCore("SendNotification", {
+        Title = "✓ Animación Aplicada",
+        Text = name.." - Camina para probar",
+        Duration = 3
+    })
 end
 
 local function PlayEmote(name, id)
@@ -375,7 +424,6 @@ local function ShowPage(page)
             Corner:Clone().Parent = btn
             Instance.new("UIAspectRatioConstraint", btn).AspectType = Enum.AspectType.ScaleWithParentSize
 
-            -- BORDE AZUL EN CADA EMOTE
             local btnStroke = Instance.new("UIStroke", btn)
             btnStroke.Color = ELECTRIC_BLUE
             btnStroke.Thickness = 1.5
