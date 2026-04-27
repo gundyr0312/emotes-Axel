@@ -1,4 +1,4 @@
---- Keybind: "," - Emotes v4 (SOLO EMOTES - OPTIMIZADO)
+--- Keybind: "," - Emotes v4 (SOLO EMOTES - CORREGIDO)
 local env = getgenv()
 if env.LastExecuted and tick() - env.LastExecuted < 30 then
     return
@@ -19,11 +19,13 @@ local ContextActionService = game:GetService("ContextActionService")
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
 local StarterGui = game:GetService("StarterGui")
+local RunService = game:GetService("RunService")
 
 local currentPage, EMOTES_PER_PAGE = 1, 300
 local emoteSpeed = 1
 local canWalk = false
 local currentTrack = nil
+local currentTrackId = nil
 
 local ELECTRIC_BLUE = Color3.fromRGB(0, 200, 255)
 
@@ -250,68 +252,106 @@ local Emotes = {
     -- Agrega más emotes aquí con el mismo formato
 }
 
--- 🔥 FUNCIÓN OPTIMIZADA - REINICIA SI ES EL MISMO
+-- 🔥 FUNCIÓN OPTIMIZADA Y CORREGIDA
 local function PlayEmote(name, id)
     local char = LocalPlayer.Character
-    if not char then return end
-
-    local hum = char:FindFirstChildOfClass("Humanoid")
-    if not hum then return end
-
-    local animator = hum:FindFirstChildOfClass("Animator")
-    if not animator then return end
-
-    -- 🔥 SI YA HAY UNO IGUAL → REINICIARLO (CLAVE)
-    if currentTrack and currentTrack.Animation
-        and currentTrack.Animation.AnimationId == "rbxassetid://"..id then
-
-        currentTrack:Stop(0)
-        currentTrack.TimePosition = 0
-        currentTrack:Play()
+    if not char then
+        StarterGui:SetCore("SendNotification", {Title = "Error", Text = "Esperando personaje...", Duration = 2})
         return
     end
 
-    -- 🔥 LIMPIAR OTROS EMOTES
-    for _, track in pairs(animator:GetPlayingAnimationTracks()) do
-        pcall(function()
-            track:Stop(0)
-            track:Destroy()
-        end)
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not hum then
+        StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No hay Humanoid", Duration = 2})
+        return
     end
 
-    currentTrack = nil
-    task.wait(0.03)
-
-    -- 🔥 NUEVA ANIMACIÓN
-    local anim = Instance.new("Animation")
-    anim.AnimationId = "rbxassetid://"..id
-
-    local track = animator:LoadAnimation(anim)
-    currentTrack = track
-
-    -- 🔥 CONFIG
-    track.Priority = canWalk and Enum.AnimationPriority.Movement or Enum.AnimationPriority.Action
-    track.Looped = canWalk
-    track:AdjustSpeed(emoteSpeed)
-
-    track:Play(0)
-
-    -- 🔥 LIMPIEZA AL TERMINAR
-    track.Stopped:Connect(function()
-        if currentTrack == track then
-            currentTrack = nil
+    -- Esperar a que el Animator exista
+    local animator = hum:FindFirstChildOfClass("Animator")
+    if not animator then
+        local attemps = 0
+        repeat
+            task.wait(0.1)
+            animator = hum:FindFirstChildOfClass("Animator")
+            attemps = attemps + 1
+            if attemps > 20 then break end
+        until animator
+        if not animator then
+            StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No hay Animator", Duration = 2})
+            return
         end
+    end
+
+    local animationId = "rbxassetid://" .. id
+
+    -- 🔥 SI ES EL MISMO EMOTE -> REINICIAR
+    if currentTrack and currentTrackId == id then
         pcall(function()
-            track:Destroy()
-            anim:Destroy()
+            currentTrack:Stop(0)
+            currentTrack.TimePosition = 0
+            currentTrack:Play()
         end)
+        StarterGui:SetCore("SendNotification", {Title = "✓ " .. name, Text = "Reiniciado", Duration = 1})
+        BackFrame.Visible = false
+        Open.Text = "Open"
+        return
+    end
+
+    -- 🔥 DETENER EMOTE ANTERIOR
+    if currentTrack then
+        pcall(function()
+            currentTrack:Stop(0)
+        end)
+        currentTrack = nil
+        currentTrackId = nil
+    end
+
+    -- Detener otros tracks de prioridad Action
+    for _, track in pairs(animator:GetPlayingAnimationTracks()) do
+        if track.Priority == Enum.AnimationPriority.Action then
+            pcall(function() track:Stop(0) end)
+        end
+    end
+
+    task.wait(0.05)
+
+    -- 🔥 CREAR NUEVO EMOTE
+    local anim = Instance.new("Animation")
+    anim.AnimationId = animationId
+
+    local success, track = pcall(function()
+        return animator:LoadAnimation(anim)
     end)
 
-    StarterGui:SetCore("SendNotification", {
-        Title = "✓ "..name,
-        Text = "Emote reproducido",
-        Duration = 2
-    })
+    if success and track then
+        currentTrack = track
+        currentTrackId = id
+
+        track.Priority = canWalk and Enum.AnimationPriority.Movement or Enum.AnimationPriority.Action
+        track.Looped = canWalk
+        track:AdjustSpeed(emoteSpeed)
+        
+        pcall(function() track:Play() end)
+
+        -- 🔥 LIMPIEZA AL TERMINAR
+        task.spawn(function()
+            while track and track.IsPlaying do
+                task.wait(0.5)
+            end
+            if currentTrack == track then
+                currentTrack = nil
+                currentTrackId = nil
+            end
+            pcall(function()
+                if track then track:Destroy() end
+                anim:Destroy()
+            end)
+        end)
+
+        StarterGui:SetCore("SendNotification", {Title = "✓ " .. name, Text = "Emote reproducido", Duration = 2})
+    else
+        StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No se pudo reproducir: " .. name, Duration = 2})
+    end
 
     BackFrame.Visible = false
     Open.Text = "Open"
@@ -422,7 +462,7 @@ SpeedUp.MouseButton1Click:Connect(function()
     emoteSpeed = math.min(emoteSpeed + 0.25, 3)
     SpeedLabel.Text = "Speed: ".. emoteSpeed.. "x"
     if currentTrack then
-        currentTrack:AdjustSpeed(emoteSpeed)
+        pcall(function() currentTrack:AdjustSpeed(emoteSpeed) end)
     end
 end)
 
@@ -430,7 +470,7 @@ SpeedDown.MouseButton1Click:Connect(function()
     emoteSpeed = math.max(emoteSpeed - 0.25, 0.25)
     SpeedLabel.Text = "Speed: ".. emoteSpeed.. "x"
     if currentTrack then
-        currentTrack:AdjustSpeed(emoteSpeed)
+        pcall(function() currentTrack:AdjustSpeed(emoteSpeed) end)
     end
 end)
 
@@ -451,11 +491,8 @@ end)
 
 LocalPlayer.CharacterAdded:Connect(function()
     task.wait(2)
-    for _, track in pairs(LocalPlayer.Character.Humanoid:GetPlayingAnimationTracks()) do
-        track:Stop(0)
-        track:Destroy()
-    end
     currentTrack = nil
+    currentTrackId = nil
     currentPage = 1
     ShowPage(1)
 end)
@@ -466,6 +503,6 @@ end
 
 StarterGui:SetCore("SendNotification", {
     Title = "Ready!",
-    Text = "Press, to open - ".. #Emotes.. " emotes loaded",
+    Text = "Press , to open - ".. #Emotes.. " emotes loaded",
     Duration = 5
 })
